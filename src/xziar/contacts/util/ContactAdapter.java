@@ -1,130 +1,155 @@
-/*
- * Copyright (c) 2015 张涛.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package xziar.contacts.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
+import android.content.Context;
+import android.database.DataSetObserver;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactInterface;
 
-import org.kymjs.kjframe.KJBitmap;
-import org.kymjs.kjframe.widget.AdapterHolder;
-import org.kymjs.kjframe.widget.KJAdapter;
-
-import java.util.ArrayList;
-import java.util.Collections;
-
-/**
- * 列表适配器
- *
- * @author kymjs (http://www.kymjs.com/) on 9/16/15.
- */
-public class ContactAdapter extends KJAdapter<ContactInterface> implements SectionIndexer
+public class ContactAdapter extends BaseAdapter
+		implements StickyListHeadersAdapter, SectionIndexer
 {
-
-	private KJBitmap kjb = new KJBitmap();
-	private ArrayList<ContactInterface> datas;
-
-	public ContactAdapter(AbsListView view, ArrayList<ContactInterface> mDatas)
+	class ViewHolder
 	{
-		super(view, mDatas, R.layout.item_list_contact);
-		datas = mDatas;
-		if (datas == null)
+		ImageView img;
+		TextView text;
+
+		public ViewHolder(View view)
 		{
-			datas = new ArrayList<ContactInterface>();
+			text = (TextView) (view.findViewById(R.id.contact_title));
+			img = (ImageView) (view.findViewById(R.id.contact_head));
 		}
+	}
+
+	private ArrayList<ContactInterface> datas = new ArrayList<>();
+	private LayoutInflater inflater;
+
+	public ContactAdapter(Context context)
+	{
+		inflater = LayoutInflater.from(context);
+	}
+	
+	public ContactAdapter(Context context,
+			ArrayList<ContactInterface> _datas)
+	{
+		inflater = LayoutInflater.from(context);
+		refresh(_datas);
+	}
+
+	public <T> void refresh(Collection<? extends ContactInterface> _datas)
+	{
+		datas.clear();
+		datas.addAll(_datas);
+		//datas = _datas;
 		Collections.sort(datas);
+		notifyDataSetChanged();
 	}
 
 	@Override
-	public void convert(AdapterHolder helper, ContactInterface item, boolean isScrolling)
+	public boolean areAllItemsEnabled()
 	{
+		return false;
 	}
 
 	@Override
-	public void convert(AdapterHolder holder, ContactInterface item, boolean isScrolling,
-			int position)
+	public boolean isEnabled(int position)
 	{
+		return true;
+	}
 
-		holder.setText(R.id.contact_title, item.getName());
-		ImageView headImg = holder.getView(R.id.contact_head);
-		if (isScrolling)
+	@Override
+	public int getCount()
+	{
+		return datas.size();
+	}
+
+	@Override
+	public Object getItem(int position)
+	{
+		if(position < datas.size())
+			return datas.get(position);
+		else
+			return null;
+	}
+
+	@Override
+	public long getItemId(int position)
+	{
+		return position;
+	}
+
+	@Override
+	public boolean hasStableIds()
+	{
+		return true;
+	}
+
+	@Override
+	public int getItemViewType(int position)
+	{
+		return 0;
+	}
+
+	@Override
+	public int getViewTypeCount()
+	{
+		return 1;
+	}
+
+	@Override
+	public boolean isEmpty()
+	{
+		return datas.size() == 0;
+	}
+
+	@Override
+	public View getView(int position, View convertView, ViewGroup parent)
+	{
+		ViewHolder holder;
+
+		if (convertView == null)
 		{
-			kjb.displayCacheOrDefult(headImg, item.getImg(),
-					R.drawable.default_head_rect);
+			convertView = inflater.inflate(R.layout.list_contact_item, parent,
+					false);
+			holder = new ViewHolder(convertView);
+			convertView.setTag(holder);
 		}
 		else
 		{
-			kjb.displayWithLoadBitmap(headImg, item.getImg(),
-					R.drawable.default_head_rect);
+			holder = (ViewHolder) convertView.getTag();
 		}
-
-		TextView tvLetter = holder.getView(R.id.contact_catalog);
-		TextView tvLine = holder.getView(R.id.contact_line);
-
-		// 如果是第0个那么一定显示#号
-		if (position == 0)
-		{
-			tvLetter.setVisibility(View.VISIBLE);
-			tvLetter.setText("" + item.getIndexChar());
-			tvLine.setVisibility(View.VISIBLE);
-		}
-		else
-		{
-			ContactInterface prevData = datas.get(position - 1);
-			if (item.getIndexChar() != prevData.getIndexChar())
-			{
-				tvLetter.setVisibility(View.VISIBLE);
-				tvLetter.setText("" + item.getIndexChar());
-				tvLine.setVisibility(View.VISIBLE);
-			}
-			else
-			{
-				tvLetter.setVisibility(View.GONE);
-				tvLine.setVisibility(View.GONE);
-			}
-		}
+		holder.text.setText(datas.get(position).getName());
+		return convertView;
 	}
 
-	/**
-	 * 根据ListView的当前位置获取分类的首字母的Char ascii值
-	 */
-	public int getSectionForPosition(int position)
+	@Override
+	public View getHeaderView(int position, View convertView, ViewGroup parent)
 	{
-		ContactInterface item = datas.get(position);
-		return item.getIndexChar();
+		if (convertView == null)
+		{
+			convertView = inflater.inflate(R.layout.list_contact_header, parent,
+					false);
+		}
+		((TextView) convertView)
+				.setText(String.valueOf(datas.get(position).getIndexChar()));
+		return convertView;
 	}
 
-	/**
-	 * 根据分类的首字母的Char ascii值获取其第一次出现该首字母的位置
-	 */
-	public int getPositionForSection(int section)
+	@Override
+	public long getHeaderId(int position)
 	{
-		for (int i = 0; i < getCount(); i++)
-		{
-			char firstChar = datas.get(i).getIndexChar();
-			if (firstChar == section)
-			{
-				return i;
-			}
-		}
-		return -1;
+		return datas.get(position).getIndexChar();
 	}
 
 	@Override
@@ -133,4 +158,34 @@ public class ContactAdapter extends KJAdapter<ContactInterface> implements Secti
 		return null;
 	}
 
+	@Override
+	public int getPositionForSection(int sectionIndex)
+	{
+		for (int i = 0; i < datas.size(); i++)
+		{
+			if (sectionIndex == datas.get(i).getIndexChar())
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	public int getSectionForPosition(int position)
+	{
+		return datas.get(position).getIndexChar();
+	}
+
+	@Override
+	public void registerDataSetObserver(DataSetObserver observer)
+	{
+		super.registerDataSetObserver(observer);
+	}
+
+	@Override
+	public void unregisterDataSetObserver(DataSetObserver observer)
+	{
+		super.unregisterDataSetObserver(observer);
+	}
 }
