@@ -1,6 +1,7 @@
 package xziar.contacts.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 
 import android.content.Context;
@@ -16,7 +17,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactInterface;
 
-public class NewContactAdapter<T> extends BaseAdapter
+public class ContactAdapter extends BaseAdapter
 		implements StickyListHeadersAdapter, SectionIndexer
 {
 	class ViewHolder
@@ -31,22 +32,30 @@ public class NewContactAdapter<T> extends BaseAdapter
 		}
 	}
 
-	private ArrayList<T> datas;
+	private ArrayList<ContactInterface> datas = new ArrayList<>();
 	private LayoutInflater inflater;
 
-	public NewContactAdapter(Context context, ArrayList<T> _datas)
+	public ContactAdapter(Context context)
+	{
+		inflater = LayoutInflater.from(context);
+	}
+	
+	public ContactAdapter(Context context,
+			ArrayList<ContactInterface> _datas)
 	{
 		inflater = LayoutInflater.from(context);
 		refresh(_datas);
 	}
 
-	public void refresh(ArrayList<T> _datas)
+	public <T> void refresh(Collection<? extends ContactInterface> _datas)
 	{
-		datas = _datas;
-		Collections.sort((ArrayList)datas);
+		datas.clear();
+		datas.addAll(_datas);
+		//datas = _datas;
+		Collections.sort(datas);
 		notifyDataSetChanged();
 	}
-	
+
 	@Override
 	public boolean areAllItemsEnabled()
 	{
@@ -68,7 +77,10 @@ public class NewContactAdapter<T> extends BaseAdapter
 	@Override
 	public Object getItem(int position)
 	{
-		return datas.get(position);
+		if(position < datas.size())
+			return datas.get(position);
+		else
+			return null;
 	}
 
 	@Override
@@ -117,9 +129,7 @@ public class NewContactAdapter<T> extends BaseAdapter
 		{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		ContactInterface ci = (ContactInterface) datas.get(position);
-		holder.text.setText(ci.getName());
-		// Log.v("err", "null tag:" + convertView.getClass().getName());
+		holder.text.setText(datas.get(position).getName());
 		return convertView;
 	}
 
@@ -131,16 +141,15 @@ public class NewContactAdapter<T> extends BaseAdapter
 			convertView = inflater.inflate(R.layout.list_contact_header, parent,
 					false);
 		}
-		ContactInterface ci = (ContactInterface) datas.get(position);
-		((TextView) convertView).setText(String.valueOf(ci.getIndexChar()));
+		((TextView) convertView)
+				.setText(String.valueOf(datas.get(position).getIndexChar()));
 		return convertView;
 	}
 
 	@Override
 	public long getHeaderId(int position)
 	{
-		ContactInterface ci = (ContactInterface) datas.get(position);
-		return ci.getIndexChar();
+		return datas.get(position).getIndexChar();
 	}
 
 	@Override
@@ -152,10 +161,9 @@ public class NewContactAdapter<T> extends BaseAdapter
 	@Override
 	public int getPositionForSection(int sectionIndex)
 	{
-		for (int i = 0; i < getCount(); i++)
+		for (int i = 0; i < datas.size(); i++)
 		{
-			ContactInterface ci = (ContactInterface) datas.get(i);
-			if (sectionIndex == ci.getIndexChar())
+			if (sectionIndex == datas.get(i).getIndexChar())
 			{
 				return i;
 			}
@@ -166,17 +174,18 @@ public class NewContactAdapter<T> extends BaseAdapter
 	@Override
 	public int getSectionForPosition(int position)
 	{
-		ContactInterface ci = (ContactInterface) datas.get(position);
-		return ci.getIndexChar();
+		return datas.get(position).getIndexChar();
 	}
 
 	@Override
 	public void registerDataSetObserver(DataSetObserver observer)
 	{
+		super.registerDataSetObserver(observer);
 	}
 
 	@Override
 	public void unregisterDataSetObserver(DataSetObserver observer)
 	{
+		super.unregisterDataSetObserver(observer);
 	}
 }

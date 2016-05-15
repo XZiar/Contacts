@@ -1,14 +1,17 @@
 package xziar.contacts.bean;
 
+import java.io.Serializable;
+
 import xziar.contacts.util.HanziToPinyin;
 
-public class ContactBean implements ContactInterface
+public class ContactBean implements ContactInterface, Serializable
 {
+	private static final long serialVersionUID = 7361607606145741754L;
 	private String name = "";
-	private String cel = "";
-	private String tel = "";
-	private String describe = "";
-	private String email = "";
+	private String cel = "111";
+	private String tel = "222";
+	private String describe = "bgfgf";
+	private String email = "fdvfdb";
 
 	private int id = -1;
 	private char firstLetter;

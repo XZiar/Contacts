@@ -19,12 +19,14 @@ import android.widget.Toast;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
+import xziar.contacts.bean.ContactInterface;
+import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
-import xziar.contacts.util.NewContactAdapter;
 import xziar.contacts.widget.SideBar;
 
 public class MainActivity extends KJActivity
-		implements SideBar.OnTouchingLetterChangedListener, TextWatcher, OnItemClickListener
+		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
+		OnItemClickListener
 {
 
 	@BindView(id = R.id.mainlist)
@@ -32,10 +34,8 @@ public class MainActivity extends KJActivity
 	private TextView mFooterView;
 
 	private ArrayList<ContactBean> datas = new ArrayList<>();
-	private NewContactAdapter<ContactBean> mAdapter;
-	
+	private ContactAdapter mAdapter;
 
-	
 	@Override
 	public void onCreate(Bundle savedInstanceState,
 			PersistableBundle persistentState)
@@ -110,19 +110,20 @@ public class MainActivity extends KJActivity
 		mListView.addFooterView(mFooterView);
 
 		mFooterView.setText(datas.size() + "位联系人");
-		mAdapter = new NewContactAdapter<>(this, datas);
+		mAdapter = new ContactAdapter(this);
+		mAdapter.refresh(new ArrayList<ContactInterface>(datas));
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 	}
 
-	private void showInfo()
+	private void showInfo(ContactBean cb)
 	{
 		Intent it = new Intent();
 		it.setClass(this, ContactInfoActivity.class);
+		it.putExtra("ContactBean", cb);
 		startActivityForResult(it, 1);
 	}
-	
-	
+
 	@Override
 	public void onTouchingLetterChanged(char c)
 	{
@@ -148,15 +149,18 @@ public class MainActivity extends KJActivity
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count)
 	{
-		ArrayList<ContactBean> temp = new ArrayList<>();
+		ArrayList<ContactInterface> temp = new ArrayList<>();
 		for (ContactBean data : datas)
 		{
-			if(data.isContain(s))
+			if (data.isContain(s))
 				temp.add(data);
 		}
 		if (mAdapter != null)
 		{
+			Toast.makeText(this, "old:" + datas.size() + ",new:" + temp.size(),
+					Toast.LENGTH_SHORT).show();
 			mAdapter.refresh(temp);
+			mAdapter.notifyDataSetChanged();
 		}
 	}
 
@@ -169,7 +173,9 @@ public class MainActivity extends KJActivity
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id)
 	{
-		Toast.makeText(this, "pos:"+position, Toast.LENGTH_SHORT).show();
-		
+		Toast.makeText(this, "pos:" + position, Toast.LENGTH_SHORT).show();
+		ContactBean cb = (ContactBean) mAdapter.getItem(position);
+		if(cb != null)
+			showInfo(cb);
 	}
 }
