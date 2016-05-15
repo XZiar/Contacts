@@ -1,6 +1,7 @@
 package xziar.contacts.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import android.content.Context;
 import android.database.DataSetObserver;
@@ -36,9 +37,16 @@ public class NewContactAdapter<T> extends BaseAdapter
 	public NewContactAdapter(Context context, ArrayList<T> _datas)
 	{
 		inflater = LayoutInflater.from(context);
-		datas = _datas;
+		refresh(_datas);
 	}
 
+	public void refresh(ArrayList<T> _datas)
+	{
+		datas = _datas;
+		Collections.sort((ArrayList)datas);
+		notifyDataSetChanged();
+	}
+	
 	@Override
 	public boolean areAllItemsEnabled()
 	{
@@ -152,7 +160,7 @@ public class NewContactAdapter<T> extends BaseAdapter
 				return i;
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	@Override

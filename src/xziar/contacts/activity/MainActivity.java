@@ -19,7 +19,6 @@ import android.widget.Toast;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
-import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.DBUtil;
 import xziar.contacts.util.NewContactAdapter;
 import xziar.contacts.widget.SideBar;
@@ -47,7 +46,7 @@ public class MainActivity extends KJActivity
 	@Override
 	public void setRootView()
 	{
-		setContentView(R.layout.activity_main2);
+		setContentView(R.layout.activity_main);
 	}
 
 	@Override
@@ -59,6 +58,34 @@ public class MainActivity extends KJActivity
 		DBUtil.add(cb);
 		cb = new ContactBean("There");
 		DBUtil.add(cb);
+		cb = new ContactBean("Here");
+		DBUtil.add(cb);
+		{
+			cb = new ContactBean("P1");
+			DBUtil.add(cb);
+			cb = new ContactBean("P3");
+			DBUtil.add(cb);
+			cb = new ContactBean("P5");
+			DBUtil.add(cb);
+			cb = new ContactBean("QQ");
+			DBUtil.add(cb);
+			cb = new ContactBean("122");
+			DBUtil.add(cb);
+			cb = new ContactBean("sca");
+			DBUtil.add(cb);
+			cb = new ContactBean("下啊房产税");
+			DBUtil.add(cb);
+			cb = new ContactBean("道非道vf");
+			DBUtil.add(cb);
+			cb = new ContactBean("俄方vesd");
+			DBUtil.add(cb);
+			cb = new ContactBean("额few是");
+			DBUtil.add(cb);
+			cb = new ContactBean("额我few如果");
+			DBUtil.add(cb);
+			cb = new ContactBean("语句一般");
+			DBUtil.add(cb);
+		}
 		cb = new ContactBean("辣鸡");
 		DBUtil.add(cb);
 		datas = DBUtil.query();
@@ -121,15 +148,15 @@ public class MainActivity extends KJActivity
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count)
 	{
-		ArrayList<ContactInterface> temp = new ArrayList<>();
-		for (ContactInterface data : datas)
+		ArrayList<ContactBean> temp = new ArrayList<>();
+		for (ContactBean data : datas)
 		{
 			if(data.isContain(s))
 				temp.add(data);
 		}
 		if (mAdapter != null)
 		{
-			//mAdapter.refresh(temp);
+			mAdapter.refresh(temp);
 		}
 	}
 
