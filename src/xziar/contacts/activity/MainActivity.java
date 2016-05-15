@@ -2,12 +2,9 @@ package xziar.contacts.activity;
 
 import java.util.ArrayList;
 
-import org.kymjs.kjframe.KJActivity;
-import org.kymjs.kjframe.ui.BindView;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -24,12 +21,10 @@ import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.SideBar;
 
-public class MainActivity extends KJActivity
+public class MainActivity extends Activity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
 		OnItemClickListener
 {
-
-	@BindView(id = R.id.mainlist)
 	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
 
@@ -37,22 +32,17 @@ public class MainActivity extends KJActivity
 	private ContactAdapter mAdapter;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState,
-			PersistableBundle persistentState)
+	public void onCreate(Bundle savedInstanceState)
 	{
-		super.onCreate(savedInstanceState, persistentState);
-	}
-
-	@Override
-	public void setRootView()
-	{
+		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		initData();
+		mListView = (StickyListHeadersListView) findViewById(R.id.mainlist);
+		initWidget();
 	}
 
-	@Override
 	public void initData()
 	{
-		super.initData();
 		DBUtil.onInit(getFilesDir());
 		ContactBean cb = new ContactBean("Hello");
 		DBUtil.add(cb);
@@ -91,10 +81,8 @@ public class MainActivity extends KJActivity
 		datas = DBUtil.query();
 	}
 
-	@Override
 	public void initWidget()
 	{
-		super.initWidget();
 		SideBar mSideBar = (SideBar) findViewById(R.id.school_friend_sidrbar);
 		TextView mDialog = (TextView) findViewById(R.id.school_friend_dialog);
 		EditText mSearchInput = (EditText) findViewById(
@@ -105,7 +93,7 @@ public class MainActivity extends KJActivity
 		mSearchInput.addTextChangedListener(this);
 
 		// ∏¯listView…Ë÷√adapter
-		mFooterView = (TextView) View.inflate(aty,
+		mFooterView = (TextView) View.inflate(this,
 				R.layout.item_list_contact_count, null);
 		mListView.addFooterView(mFooterView);
 
@@ -175,7 +163,7 @@ public class MainActivity extends KJActivity
 	{
 		Toast.makeText(this, "pos:" + position, Toast.LENGTH_SHORT).show();
 		ContactBean cb = (ContactBean) mAdapter.getItem(position);
-		if(cb != null)
+		if (cb != null)
 			showInfo(cb);
 	}
 }
