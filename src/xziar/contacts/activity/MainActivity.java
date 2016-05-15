@@ -6,37 +6,48 @@ import org.kymjs.kjframe.KJActivity;
 import org.kymjs.kjframe.ui.BindView;
 
 import android.content.Intent;
+import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.bean.ContactInterface;
-import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
+import xziar.contacts.util.NewContactAdapter;
 import xziar.contacts.widget.SideBar;
 
 public class MainActivity extends KJActivity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher, OnItemClickListener
 {
 
-	@BindView(id = R.id.school_friend_member)
-	private ListView mListView;
+	@BindView(id = R.id.mainlist)
+	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
 
 	private ArrayList<ContactBean> datas = new ArrayList<>();
-	private ContactAdapter mAdapter;
+	private NewContactAdapter<ContactBean> mAdapter;
+	
+
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState,
+			PersistableBundle persistentState)
+	{
+		super.onCreate(savedInstanceState, persistentState);
+	}
 
 	@Override
 	public void setRootView()
 	{
-		setContentView(R.layout.activity_main);
+		setContentView(R.layout.activity_main2);
 	}
 
 	@Override
@@ -72,8 +83,7 @@ public class MainActivity extends KJActivity
 		mListView.addFooterView(mFooterView);
 
 		mFooterView.setText(datas.size() + "位联系人");
-		ArrayList<ContactInterface> conts = new ArrayList<ContactInterface>(datas);
-		mAdapter = new ContactAdapter(mListView, conts);
+		mAdapter = new NewContactAdapter<>(this, datas);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 	}
@@ -119,7 +129,7 @@ public class MainActivity extends KJActivity
 		}
 		if (mAdapter != null)
 		{
-			mAdapter.refresh(temp);
+			//mAdapter.refresh(temp);
 		}
 	}
 
