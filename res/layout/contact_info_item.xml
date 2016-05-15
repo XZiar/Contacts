@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
+    android:layout_margin="2dp"
     android:orientation="vertical" >
 
     <LinearLayout
@@ -9,8 +9,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingTop="5dp" >
+        android:paddingBottom="5dp" >
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -23,9 +22,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:singleLine="true"
+                android:text="手机"
                 android:textColor="#4090f0"
-                android:textSize="14sp"
-                android:text="手机" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/contact_val"
@@ -46,21 +45,26 @@
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:orientation="horizontal" >
 
             <ImageButton
-                android:id="@+id/contact_call"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_gravity="center_vertical"
-                android:src="@drawable/ic_search" />
-            
-            <ImageButton 
                 android:id="@+id/contact_msg"
-                android:layout_width="32dp"
-            	android:layout_height="32dp"
-            	android:layout_gravity="center_vertical"
-            	android:src="@drawable/ic_search"/>
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:scaleType="fitXY"
+                android:background="@drawable/icon_msg" />
+
+            <ImageButton
+                android:id="@+id/contact_call"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginStart="5dp"
+                android:layout_marginEnd="5dp"
+                android:scaleType="fitXY"
+                android:background="@drawable/icon_call" />
         </LinearLayout>
     </LinearLayout>
 
