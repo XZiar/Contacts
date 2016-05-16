@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -62,7 +61,16 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		return super.onOptionsItemSelected(item);
+		switch(item.getItemId())
+		{
+		case R.id.action_add:
+			Intent it = new Intent(this, AddContactActivity.class);
+			startActivityForResult(it, 2);
+			break;
+		default:
+			super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 
 	public void initData()
