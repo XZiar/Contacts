@@ -2,51 +2,117 @@ package xziar.contacts.activity;
 
 import java.io.FileNotFoundException;
 
-import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
+import xziar.contacts.util.DBUtil;
 
-public class AddContactActivity extends Activity
+public class AddContactActivity extends AppCompatActivity
 {
 	private ContactBean cb;
+	private TextView txt_title;
+	private ImageView img_head;
+	private Bitmap bmp;
+	private EditText txt_name, txt_cel, txt_tel, txt_email, txt_des;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_contact);
-		cb = (ContactBean) getIntent().getSerializableExtra("ContactBean");
+		int ID = getIntent().getIntExtra("ContactBeanID", 0);
+		cb = DBUtil.query(ID);
+
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar.setTitle("");
+		setSupportActionBar(toolbar);
+		ActionBar actbar = getSupportActionBar();
+		actbar.setDisplayHomeAsUpEnabled(true);
+		{
+			txt_title = (TextView) findViewById(R.id.title);
+			img_head = (ImageView) findViewById(R.id.contact_head);
+			txt_name = (EditText) findViewById(R.id.contact_name);
+			txt_cel = (EditText) findViewById(R.id.contact_cel);
+			txt_tel = (EditText) findViewById(R.id.contact_tel);
+			txt_email = (EditText) findViewById(R.id.contact_email);
+			txt_des = (EditText) findViewById(R.id.contact_des);
+		}
 		if (cb != null)
 			initData();
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.menu_add, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+		case R.id.action_yes:
+			if (txt_name.getText().length() != 0)
+			{
+				saveData();
+				Intent intent = new Intent();
+				intent.putExtra("changed", true);
+				intent.putExtra("ContactBeanID", cb.getId());
+				setResult(RESULT_OK, intent);
+				finish();
+			}
+			break;
+		default:
+			super.onOptionsItemSelected(item);
+		}
+		return true;
+	}
+
+	private void saveData()
+	{
+		if (cb != null)
+			DBUtil.delete(cb);
+		cb = new ContactBean();
+		cb.setName(txt_name.getText().toString());
+		cb.setCel(txt_cel.getText().toString());
+		cb.setTel(txt_tel.getText().toString());
+		cb.setEmail(txt_email.getText().toString());
+		cb.setDescribe(txt_des.getText().toString());
+		cb.setHead(bmp);
+		DBUtil.add(cb);
+	}
+
 	private void initData()
 	{
-		((TextView) findViewById(R.id.title)).setText("修改联系人");
-		((EditText) findViewById(R.id.contact_name)).setText(cb.getName());
-		((EditText) findViewById(R.id.contact_cel)).setText(cb.getCel());
-		((EditText) findViewById(R.id.contact_tel)).setText(cb.getTel());
-		((EditText) findViewById(R.id.contact_email))
-				.setText(cb.getEmail());
-		((EditText) findViewById(R.id.contact_des))
-				.setText(cb.getDescribe());
+		txt_title.setText("修改联系人");
+		txt_name.setText(cb.getName());
+		txt_cel.setText(cb.getCel());
+		txt_tel.setText(cb.getTel());
+		txt_email.setText(cb.getEmail());
+		txt_des.setText(cb.getDescribe());
 		if (cb.getImg() != null)
 		{
-			((ImageView) findViewById(R.id.contact_name)).setImageBitmap(cb.getImg());
+			img_head.setImageBitmap(cb.getImg());
 		}
 	}
-	
+
 	public void onClickHead(View view)
 	{
 		Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -65,17 +131,18 @@ public class AddContactActivity extends Activity
 			ContentResolver cr = this.getContentResolver();
 			try
 			{
-				Bitmap bitmap = BitmapFactory
-						.decodeStream(cr.openInputStream(uri));
-				ImageView imageView = (ImageView) findViewById(
-						R.id.contact_head);
-				/* 将Bitmap设定到ImageView */
-				imageView.setImageBitmap(bitmap);
+				bmp = BitmapFactory.decodeStream(cr.openInputStream(uri));
+				img_head.setImageBitmap(bmp);
 			}
 			catch (FileNotFoundException e)
 			{
 				Log.e("Exception", e.getMessage(), e);
 			}
+		}
+		else if (resultCode == RESULT_CANCELED)
+		{
+			bmp = null;
+			img_head.setImageResource(R.drawable.default_head_rect);
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}

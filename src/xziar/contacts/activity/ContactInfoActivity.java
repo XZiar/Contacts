@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
+import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.ContactInfoItem;
 
 public class ContactInfoActivity extends AppCompatActivity
@@ -21,7 +22,8 @@ public class ContactInfoActivity extends AppCompatActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
-		cb = (ContactBean) getIntent().getSerializableExtra("ContactBean");
+		int ID = getIntent().getIntExtra("ContactBeanID", 0);
+		cb = DBUtil.query(ID);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");

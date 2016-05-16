@@ -1,5 +1,6 @@
 package xziar.contacts.bean;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
 
 import android.graphics.Bitmap;
@@ -14,7 +15,7 @@ public class ContactBean implements ContactInterface, Serializable
 	private String tel = "222";
 	private String describe = "bgfgf";
 	private String email = "fdvfdb";
-	private Bitmap img = null;
+	private byte[] img = null;
 
 	private int id = -1;
 	private char firstLetter;
@@ -117,20 +118,22 @@ public class ContactBean implements ContactInterface, Serializable
 	@Override
 	public Bitmap getImg()
 	{
-		return null;
+		if (img == null)
+			return null;
+		else
+			return BitmapFactory.decodeByteArray(img, 0, img.length);
 	}
 
 	public void setImg(byte[] img)
 	{
-		if (img == null)
-			this.img = null;
-		else
-			this.img = BitmapFactory.decodeByteArray(img, 0, img.length);
+		this.img = img;
 	}
 
 	public void setHead(Bitmap img)
 	{
-		this.img = img;
+		final ByteArrayOutputStream os = new ByteArrayOutputStream();
+		img.compress(Bitmap.CompressFormat.PNG, 100, os);
+		this.img = os.toByteArray();
 	}
 
 	public int getId()

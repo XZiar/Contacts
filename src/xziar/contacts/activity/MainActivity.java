@@ -29,6 +29,9 @@ public class MainActivity extends AppCompatActivity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
 		OnItemClickListener
 {
+	private final static int REQUESTCODE_ADD = 1;
+	private final static int REQUESTCODE_INFO = 2;
+
 	private static Context context = null;
 	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
 		setSupportActionBar(toolbar);
-		
+
 		initData();
 		mListView = (StickyListHeadersListView) findViewById(R.id.mainlist);
 		initWidget();
@@ -61,16 +64,32 @@ public class MainActivity extends AppCompatActivity
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch(item.getItemId())
+		switch (item.getItemId())
 		{
 		case R.id.action_add:
 			Intent it = new Intent(this, AddContactActivity.class);
-			startActivityForResult(it, 2);
+			startActivityForResult(it, REQUESTCODE_ADD);
 			break;
 		default:
 			super.onOptionsItemSelected(item);
 		}
 		return true;
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent data)
+	{
+		if (data != null)
+		{
+			if (data.getBooleanExtra("changed", false))
+			{
+				datas = DBUtil.query();
+				mAdapter.refresh(datas);
+				mAdapter.notifyDataSetChanged();
+			}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public void initData()
@@ -139,8 +158,8 @@ public class MainActivity extends AppCompatActivity
 	{
 		Intent it = new Intent();
 		it.setClass(this, ContactInfoActivity.class);
-		it.putExtra("ContactBean", cb);
-		startActivityForResult(it, 1);
+		it.putExtra("ContactBeanID", cb.getId());
+		startActivityForResult(it, REQUESTCODE_INFO);
 	}
 
 	@Override

@@ -39,9 +39,8 @@ public class ContactAdapter extends BaseAdapter
 	{
 		inflater = LayoutInflater.from(context);
 	}
-	
-	public ContactAdapter(Context context,
-			ArrayList<ContactInterface> _datas)
+
+	public ContactAdapter(Context context, ArrayList<ContactInterface> _datas)
 	{
 		inflater = LayoutInflater.from(context);
 		refresh(_datas);
@@ -51,7 +50,6 @@ public class ContactAdapter extends BaseAdapter
 	{
 		datas.clear();
 		datas.addAll(_datas);
-		//datas = _datas;
 		Collections.sort(datas);
 		notifyDataSetChanged();
 	}
@@ -77,7 +75,7 @@ public class ContactAdapter extends BaseAdapter
 	@Override
 	public Object getItem(int position)
 	{
-		if(position < datas.size())
+		if (position < datas.size())
 			return datas.get(position);
 		else
 			return null;
@@ -129,7 +127,10 @@ public class ContactAdapter extends BaseAdapter
 		{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		holder.text.setText(datas.get(position).getName());
+		ContactInterface ci = datas.get(position);
+		holder.text.setText(ci.getName());
+		if (ci.getImg() != null)
+			holder.img.setImageBitmap(ci.getImg());
 		return convertView;
 	}
 
