@@ -22,13 +22,13 @@ public class ContactInfoActivity extends AppCompatActivity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
 		cb = (ContactBean) getIntent().getSerializableExtra("ContactBean");
-		
+
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
 		setSupportActionBar(toolbar);
 		ActionBar actbar = getSupportActionBar();
 		actbar.setDisplayHomeAsUpEnabled(true);
-		
+
 		TextView name = (TextView) findViewById(R.id.contact_title);
 		name.setText(cb.getName());
 		ll_cont = (LinearLayout) findViewById(R.id.contact_content);
@@ -36,13 +36,16 @@ public class ContactInfoActivity extends AppCompatActivity
 		cii_cel = new ContactInfoItem(this, ll_cont, "手机", cb.getCel());
 		ll_cont.addView(cii_cel.getLayout());
 
-		cii_tel = new ContactInfoItem(this, ll_cont, "座机", cb.getTel(), false);
+		cii_tel = new ContactInfoItem(this, ll_cont, "座机", cb.getTel(), true,
+				false);
 		ll_cont.addView(cii_tel.getLayout());
 
-		cii_email = new ContactInfoItem(this, ll_cont, "Email", cb.getEmail(), false);
+		cii_email = new ContactInfoItem(this, ll_cont, "Email", cb.getEmail(),
+				false, false);
 		ll_cont.addView(cii_email.getLayout());
 
-		cii_des = new ContactInfoItem(this, ll_cont, "备注", cb.getDescribe(), false);
+		cii_des = new ContactInfoItem(this, ll_cont, "备注", cb.getDescribe(),
+				false, false);
 		ll_cont.addView(cii_des.getLayout());
 
 	}
