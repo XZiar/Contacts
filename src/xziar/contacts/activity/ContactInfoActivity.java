@@ -23,10 +23,11 @@ public class ContactInfoActivity extends AppCompatActivity
 		setContentView(R.layout.activity_contact_info);
 		cb = (ContactBean) getIntent().getSerializableExtra("ContactBean");
 		
-		setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		toolbar.setTitle("");
+		setSupportActionBar(toolbar);
 		ActionBar actbar = getSupportActionBar();
-		actbar.setDisplayShowTitleEnabled(false);
-		actbar.setDisplayShowHomeEnabled(true);
+		actbar.setDisplayHomeAsUpEnabled(true);
 		
 		TextView name = (TextView) findViewById(R.id.contact_title);
 		name.setText(cb.getName());
