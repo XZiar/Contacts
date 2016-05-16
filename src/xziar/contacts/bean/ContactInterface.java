@@ -1,9 +1,11 @@
 package xziar.contacts.bean;
 
+import android.graphics.Bitmap;
+
 public interface ContactInterface extends Comparable<ContactInterface>
 {
 	public char getIndexChar();
 	public String getName();
-	public String getImg();
+	public Bitmap getImg();
 	public boolean isContain(CharSequence s);
 }

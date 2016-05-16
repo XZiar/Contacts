@@ -2,6 +2,8 @@ package xziar.contacts.bean;
 
 import java.io.Serializable;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import xziar.contacts.util.HanziToPinyin;
 
 public class ContactBean implements ContactInterface, Serializable
@@ -12,6 +14,7 @@ public class ContactBean implements ContactInterface, Serializable
 	private String tel = "222";
 	private String describe = "bgfgf";
 	private String email = "fdvfdb";
+	private Bitmap img = null;
 
 	private int id = -1;
 	private char firstLetter;
@@ -25,7 +28,7 @@ public class ContactBean implements ContactInterface, Serializable
 	{
 		setName(name);
 	}
-	
+
 	@Override
 	public int compareTo(ContactInterface another)
 	{
@@ -112,9 +115,22 @@ public class ContactBean implements ContactInterface, Serializable
 	}
 
 	@Override
-	public String getImg()
+	public Bitmap getImg()
 	{
 		return null;
+	}
+
+	public void setImg(byte[] img)
+	{
+		if (img == null)
+			this.img = null;
+		else
+			this.img = BitmapFactory.decodeByteArray(img, 0, img.length);
+	}
+
+	public void setHead(Bitmap img)
+	{
+		this.img = img;
 	}
 
 	public int getId()

@@ -1,5 +1,6 @@
 package xziar.contacts.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -7,6 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
+import android.graphics.Bitmap;
 import android.util.Log;
 import xziar.contacts.bean.ContactBean;
 
@@ -23,8 +25,8 @@ public class DBUtil
 			+ "Img BLOB" 
 			+ ");";
 	private static final String insertSQL = "insert into contacts"
-			+ "(Name,Tel,Cel,Email,Describe) "
-			+ "values(?,?,?,?,?)";
+			+ "(Name,Tel,Cel,Email,Describe,Img) "
+			+ "values(?,?,?,?,?,?)";
 	private static final String deleteSQL = "delete from contacts where ID=?";
 	private static final String selectAllSQL = "select "
 			+ "ID,Name,Tel,Cel,Email,Describe,Img "
@@ -55,7 +57,15 @@ public class DBUtil
 		stmt.bindString(3, cb.getCel());
 		stmt.bindString(4, cb.getEmail());
 		stmt.bindString(5, cb.getDescribe());
-
+		Bitmap bmp = cb.getImg();
+		if(bmp != null)
+		{
+			final ByteArrayOutputStream os = new ByteArrayOutputStream();
+			bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
+			stmt.bindBlob(6, os.toByteArray());
+		}
+		else
+			stmt.bindNull(6);
 		try
 		{
 			long ret = stmt.executeInsert();
