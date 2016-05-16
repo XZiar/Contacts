@@ -2,9 +2,12 @@ package xziar.contacts.activity;
 
 import java.util.ArrayList;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -21,10 +24,11 @@ import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.SideBar;
 
-public class MainActivity extends Activity
+public class MainActivity extends AppCompatActivity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
 		OnItemClickListener
 {
+	private static Context context = null;
 	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
 
@@ -34,8 +38,13 @@ public class MainActivity extends Activity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
+		context = getApplicationContext();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+		ActionBar actbar = getSupportActionBar();
+		actbar.setDisplayShowTitleEnabled(false);
+		
 		initData();
 		mListView = (StickyListHeadersListView) findViewById(R.id.mainlist);
 		initWidget();
@@ -83,10 +92,9 @@ public class MainActivity extends Activity
 
 	public void initWidget()
 	{
-		SideBar mSideBar = (SideBar) findViewById(R.id.school_friend_sidrbar);
-		TextView mDialog = (TextView) findViewById(R.id.school_friend_dialog);
-		EditText mSearchInput = (EditText) findViewById(
-				R.id.school_friend_member_search_input);
+		SideBar mSideBar = (SideBar) findViewById(R.id.sidebar);
+		TextView mDialog = (TextView) findViewById(R.id.pinyin_box);
+		EditText mSearchInput = (EditText) findViewById(R.id.search_input);
 
 		mSideBar.setTextView(mDialog);
 		mSideBar.setOnTouchingLetterChangedListener(this);
@@ -165,5 +173,10 @@ public class MainActivity extends Activity
 		ContactBean cb = (ContactBean) mAdapter.getItem(position);
 		if (cb != null)
 			showInfo(cb);
+	}
+
+	public static Context getContext()
+	{
+		return context;
 	}
 }

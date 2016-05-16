@@ -1,14 +1,16 @@
 package xziar.contacts.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.widget.ContactInfoItem;
 
-public class ContactInfoActivity extends Activity
+public class ContactInfoActivity extends AppCompatActivity
 {
 	private ContactBean cb;
 	private LinearLayout ll_cont;
@@ -20,6 +22,12 @@ public class ContactInfoActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
 		cb = (ContactBean) getIntent().getSerializableExtra("ContactBean");
+		
+		setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+		ActionBar actbar = getSupportActionBar();
+		actbar.setDisplayShowTitleEnabled(false);
+		actbar.setDisplayShowHomeEnabled(true);
+		
 		TextView name = (TextView) findViewById(R.id.contact_title);
 		name.setText(cb.getName());
 		ll_cont = (LinearLayout) findViewById(R.id.contact_content);

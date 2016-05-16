@@ -1,20 +1,42 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
     android:orientation="vertical"
-    android:paddingBottom="20dp"
-    android:paddingEnd="15dp"
-    android:paddingStart="15dp"
-    android:paddingTop="20dp"
     tools:context="${relativePackage}.${activityClass}" >
+	
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:theme="@style/ThemeOverlay.AppCompat.ActionBar" >
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="通讯录"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="4dp"
+            android:layout_gravity="left"
+            android:scaleType="fitXY"
+            android:background="@drawable/icon_add" />
+    </android.support.v7.widget.Toolbar>
+    
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         android:orientation="horizontal"
+        android:paddingEnd="15dp"
+    	android:paddingStart="15dp"
+    	android:paddingTop="20dp"
         android:paddingBottom="20dp" >
 
         <ImageView
