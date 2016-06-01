@@ -12,56 +12,64 @@ import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.*;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.RawContacts;
 import android.util.Log;
 import xziar.contacts.bean.ContactBean;
 
 public class SystemContactUtil
 {
-	private static final String[] paramPhoto = new String[] {
-			ContactsContract.Contacts.Photo.PHOTO };
-	private static final String[] paramPeople = new String[] { "mimetype",
+	private static final String[] paramPhoto = new String[] { Photo.PHOTO };
+	private static final String[] paramPeople = new String[] { Data.MIMETYPE,
 			"data1", "data2" };
 
 	public static int add(Context context, ContactBean cb)
 	{
-		Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
+		// Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
 		ContentResolver resolver = context.getContentResolver();
 		ArrayList<ContentProviderOperation> operations = new ArrayList<>();
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValue("account_name", null).build());
+		operations
+				.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
+						.withValue(RawContacts.ACCOUNT_NAME, null).build());
 
-		uri = Uri.parse("content://com.android.contacts/data");
-		// 添加姓名
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValueBackReference("raw_contact_id", 0)
-				.withValue("mimetype", StructuredName.CONTENT_ITEM_TYPE)
-				.withValue("data2", cb.getName()).build());
-		// 添加电话号码
-
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValueBackReference("raw_contact_id", 0)
-				.withValue("mimetype", Phone.CONTENT_ITEM_TYPE)
+		// uri = Uri.parse("content://com.android.contacts/data");
+		// name
+		operations
+				.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+						.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+						.withValue(Data.MIMETYPE,
+								StructuredName.CONTENT_ITEM_TYPE)
+						.withValue("data1", cb.getName()).build());
+		// phone
+		operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
 				.withValue("data1", cb.getCel())
 				.withValue("data2", Phone.TYPE_MOBILE).build());
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValueBackReference("raw_contact_id", 0)
-				.withValue("mimetype", Phone.CONTENT_ITEM_TYPE)
+		operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, Phone.CONTENT_ITEM_TYPE)
 				.withValue("data1", cb.getTel())
 				.withValue("data2", Phone.TYPE_HOME).build());
-
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValueBackReference("raw_contact_id", 0)
-				.withValue("mimetype", Note.CONTENT_ITEM_TYPE)
-				.withValue("data2", cb.getDescribe()).build());
-
-		operations.add(ContentProviderOperation.newInsert(uri)
-				.withValueBackReference("raw_contact_id", 0)
-				.withValue("mimetype", Photo.CONTENT_ITEM_TYPE)
+		// email
+		operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, Email.CONTENT_ITEM_TYPE)
+				.withValue("data1", cb.getEmail()).build());
+		// descibe
+		operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, Note.CONTENT_ITEM_TYPE)
+				.withValue("data1", cb.getDescribe()).build());
+		// photo
+		operations.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
+				.withValueBackReference(Data.RAW_CONTACT_ID, 0)
+				.withValue(Data.MIMETYPE, Photo.CONTENT_ITEM_TYPE)
 				.withValue(Photo.PHOTO, cb.getImg()).build());
 
 		try
 		{
-			resolver.applyBatch("com.android.contacts", operations);
+			resolver.applyBatch(ContactsContract.AUTHORITY, operations);
 		}
 		catch (RemoteException | OperationApplicationException e)
 		{

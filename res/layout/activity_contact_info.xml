@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="${relativePackage}.${activityClass}"
-    android:descendantFocusability="beforeDescendants"
-    android:focusableInTouchMode="true" >
+    tools:context="${relativePackage}.${activityClass}" >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -29,8 +27,7 @@
         android:paddingBottom="20dp"
         android:paddingEnd="15dp"
         android:paddingStart="15dp"
-        android:paddingTop="20dp"
-        android:background="@android:color/white" >
+        android:paddingTop="20dp" >
 
         <ImageView
             android:id="@+id/contact_head"

@@ -5,17 +5,17 @@
     tools:context="activity.MainActivity" >
 
     <item
-        android:id="@+id/action_add"
-        android:icon="@drawable/icon_add"
-        android:orderInCategory="80"
-        app:showAsAction="always"
-        android:title="add"/>
-
-    <item
         android:id="@+id/action_import"
         android:icon="@drawable/icon_import"
         android:orderInCategory="80"
         app:showAsAction="always"
         android:title="import"/>
     
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/icon_add"
+        android:orderInCategory="80"
+        app:showAsAction="always"
+        android:title="add"/>
+
 </menu>
