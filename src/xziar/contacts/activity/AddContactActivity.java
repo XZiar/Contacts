@@ -21,6 +21,7 @@ import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.util.DBUtil;
+import xziar.contacts.util.SystemContactUtil;
 
 public class AddContactActivity extends AppCompatActivity
 {
@@ -35,8 +36,6 @@ public class AddContactActivity extends AppCompatActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_add_contact);
-		int ID = getIntent().getIntExtra("ContactBeanID", 0);
-		cb = DBUtil.query(ID);
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
@@ -52,8 +51,16 @@ public class AddContactActivity extends AppCompatActivity
 			txt_email = (EditText) findViewById(R.id.contact_email);
 			txt_des = (EditText) findViewById(R.id.contact_des);
 		}
-		if (cb != null)
+		bmp = null;
+		int ID = getIntent().getIntExtra("ContactBeanID", -1);
+		if(ID != -1)
+		{
+			cb = DBUtil.query(ID);
 			initData();
+		}
+		else
+			cb = null;
+			
 	}
 
 	@Override
@@ -68,6 +75,9 @@ public class AddContactActivity extends AppCompatActivity
 	{
 		switch (item.getItemId())
 		{
+		case 0x102002c:
+			finish();
+			break;
 		case R.id.action_yes:
 			if (txt_name.getText().length() != 0)
 			{
@@ -97,6 +107,7 @@ public class AddContactActivity extends AppCompatActivity
 		cb.setDescribe(txt_des.getText().toString());
 		cb.setHead(bmp);
 		DBUtil.add(cb);
+		SystemContactUtil.add(this, cb);
 	}
 
 	private void initData()
@@ -107,9 +118,11 @@ public class AddContactActivity extends AppCompatActivity
 		txt_tel.setText(cb.getTel());
 		txt_email.setText(cb.getEmail());
 		txt_des.setText(cb.getDescribe());
-		if (cb.getImg() != null)
+		bmp = cb.getHead();
+		if (bmp != null)
 		{
-			img_head.setImageBitmap(cb.getImg());
+			Log.v("try", "set image");
+			img_head.setImageBitmap(bmp);
 		}
 	}
 

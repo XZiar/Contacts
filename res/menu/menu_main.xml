@@ -11,4 +11,11 @@
         app:showAsAction="always"
         android:title="add"/>
 
+    <item
+        android:id="@+id/action_import"
+        android:icon="@drawable/icon_import"
+        android:orderInCategory="80"
+        app:showAsAction="always"
+        android:title="import"/>
+    
 </menu>

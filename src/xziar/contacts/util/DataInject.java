@@ -61,8 +61,10 @@ public class DataInject
 			case Cursor.FIELD_TYPE_INTEGER:
 				val = cs.getInt(a);
 				break;
+			case Cursor.FIELD_TYPE_NULL:
 			case Cursor.FIELD_TYPE_BLOB:
 				val = cs.getBlob(a);
+				Log.v("obj-blob", "receive the:"+val);
 				break;
 			case Cursor.FIELD_TYPE_FLOAT:
 				val = cs.getDouble(a);
@@ -122,8 +124,10 @@ public class DataInject
 					case Cursor.FIELD_TYPE_INTEGER:
 						val = cs.getInt(index);
 						break;
+					case Cursor.FIELD_TYPE_NULL:
 					case Cursor.FIELD_TYPE_BLOB:
 						val = cs.getBlob(index);
+						Log.v("objs-blob", "receive one:"+val);
 						break;
 					case Cursor.FIELD_TYPE_FLOAT:
 						val = cs.getDouble(index);

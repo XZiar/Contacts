@@ -1,6 +1,5 @@
 package xziar.contacts.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -8,7 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
-import android.graphics.Bitmap;
 import android.util.Log;
 import xziar.contacts.bean.ContactBean;
 
@@ -55,12 +53,10 @@ public class DBUtil
 		stmt.bindString(3, cb.getCel());
 		stmt.bindString(4, cb.getEmail());
 		stmt.bindString(5, cb.getDescribe());
-		Bitmap bmp = cb.getImg();
-		if (bmp != null)
+		byte[] img = cb.getImg();
+		if (img != null)
 		{
-			final ByteArrayOutputStream os = new ByteArrayOutputStream();
-			bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
-			stmt.bindBlob(6, os.toByteArray());
+			stmt.bindBlob(6, img);
 		}
 		else
 			stmt.bindNull(6);
@@ -98,16 +94,17 @@ public class DBUtil
 	static public ArrayList<ContactBean> query()
 	{
 		Cursor cursor = db.rawQuery(selectAllSQL, null);
-		return DataInject.CursorToObjs(cursor, ContactBean.class);
+		ArrayList<ContactBean> cbs = DataInject.CursorToObjs(cursor, ContactBean.class);
+		cursor.close();
+		return cbs;
 	}
 
 	static public ContactBean query(int ID)
 	{
-		String[] arg = new String[1];
-		arg[0] = "" + ID;
+		String[] arg = new String[] { "" + ID };
+		Cursor cursor = db.rawQuery(selectSQL, arg);
 		try
 		{
-			Cursor cursor = db.rawQuery(selectSQL, arg);
 			ContactBean cb = new ContactBean();
 			if (cursor.moveToFirst())
 				DataInject.CursorToObj(cursor, cb);
@@ -120,7 +117,10 @@ public class DBUtil
 			Log.e("sql", e.getLocalizedMessage());
 			return null;
 		}
-
+		finally
+		{
+			cursor.close();
+		}
 	}
 
 	static public void onExit()

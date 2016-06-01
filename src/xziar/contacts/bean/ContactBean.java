@@ -115,13 +115,9 @@ public class ContactBean implements ContactInterface, Serializable
 		this.email = email;
 	}
 
-	@Override
-	public Bitmap getImg()
+	public byte[] getImg()
 	{
-		if (img == null)
-			return null;
-		else
-			return BitmapFactory.decodeByteArray(img, 0, img.length);
+		return img;
 	}
 
 	public void setImg(byte[] img)
@@ -129,11 +125,25 @@ public class ContactBean implements ContactInterface, Serializable
 		this.img = img;
 	}
 
-	public void setHead(Bitmap img)
+	@Override
+	public Bitmap getHead()
 	{
+		if (img == null)
+			return null;
+		else
+			return BitmapFactory.decodeByteArray(img, 0, img.length);
+	}
+	
+	public void setHead(Bitmap bmp)
+	{
+		if(bmp == null)
+		{
+			img = null;
+			return;
+		}
 		final ByteArrayOutputStream os = new ByteArrayOutputStream();
-		img.compress(Bitmap.CompressFormat.PNG, 100, os);
-		this.img = os.toByteArray();
+		bmp.compress(Bitmap.CompressFormat.PNG, 100, os);
+		img = os.toByteArray();
 	}
 
 	public int getId()

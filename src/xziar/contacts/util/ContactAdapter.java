@@ -30,6 +30,19 @@ public class ContactAdapter extends BaseAdapter
 			text = (TextView) (view.findViewById(R.id.contact_title));
 			img = (ImageView) (view.findViewById(R.id.contact_head));
 		}
+
+		public void setData(ContactInterface ci)
+		{
+			text.setText(ci.getName());
+			if (ci.getHead() != null)
+			{
+				img.setImageBitmap(ci.getHead());
+			}
+			else
+			{
+				img.setImageResource(R.drawable.default_head_rect);
+			}
+		}
 	}
 
 	private ArrayList<ContactInterface> datas = new ArrayList<>();
@@ -127,10 +140,8 @@ public class ContactAdapter extends BaseAdapter
 		{
 			holder = (ViewHolder) convertView.getTag();
 		}
-		ContactInterface ci = datas.get(position);
-		holder.text.setText(ci.getName());
-		if (ci.getImg() != null)
-			holder.img.setImageBitmap(ci.getImg());
+		holder.setData(datas.get(position));
+
 		return convertView;
 	}
 

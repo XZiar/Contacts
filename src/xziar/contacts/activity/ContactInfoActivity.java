@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import xziar.contacts.R;
@@ -16,14 +18,18 @@ public class ContactInfoActivity extends AppCompatActivity
 	private ContactBean cb;
 	private LinearLayout ll_cont;
 	private ContactInfoItem cii_cel, cii_tel, cii_email, cii_des;
+	private ImageView img_head;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
-		int ID = getIntent().getIntExtra("ContactBeanID", 0);
-		cb = DBUtil.query(ID);
+		int ID = getIntent().getIntExtra("ContactBeanID", -1);
+		if (ID != -1)
+			cb = DBUtil.query(ID);
+		else
+			cb = null;
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
@@ -34,6 +40,10 @@ public class ContactInfoActivity extends AppCompatActivity
 		TextView name = (TextView) findViewById(R.id.contact_title);
 		name.setText(cb.getName());
 		ll_cont = (LinearLayout) findViewById(R.id.contact_content);
+		img_head = (ImageView) findViewById(R.id.contact_head);
+
+		if (cb.getHead() != null)
+			img_head.setImageBitmap(cb.getHead());
 
 		cii_cel = new ContactInfoItem(this, ll_cont, "ÊÖ»ú", cb.getCel());
 		ll_cont.addView(cii_cel.getLayout());
@@ -50,5 +60,19 @@ public class ContactInfoActivity extends AppCompatActivity
 				false, false);
 		ll_cont.addView(cii_des.getLayout());
 
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+		case 0x102002c:
+			finish();
+			break;
+		default:
+			super.onOptionsItemSelected(item);
+		}
+		return true;
 	}
 }

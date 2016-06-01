@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,13 +17,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
+import xziar.contacts.util.SystemContactUtil;
 import xziar.contacts.widget.SideBar;
 
 public class MainActivity extends AppCompatActivity
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
 
 	private ArrayList<ContactBean> datas = new ArrayList<>();
 	private ContactAdapter mAdapter;
+	public ContactBean objcb;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -70,6 +72,14 @@ public class MainActivity extends AppCompatActivity
 			Intent it = new Intent(this, AddContactActivity.class);
 			startActivityForResult(it, REQUESTCODE_ADD);
 			break;
+		case R.id.action_import:
+			ArrayList<ContactBean> cbs = SystemContactUtil.readAll(context);
+			for(ContactBean cb : cbs)
+			{
+				DBUtil.add(cb);
+			}
+			refreshData();
+			break;
 		default:
 			super.onOptionsItemSelected(item);
 		}
@@ -84,14 +94,20 @@ public class MainActivity extends AppCompatActivity
 		{
 			if (data.getBooleanExtra("changed", false))
 			{
-				datas = DBUtil.query();
-				mAdapter.refresh(datas);
-				mAdapter.notifyDataSetChanged();
+				refreshData();
+				Log.v("act res", "changed");
 			}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	public void refreshData()
+	{
+		datas = DBUtil.query();
+		mAdapter.refresh(datas);
+		mAdapter.notifyDataSetChanged();
+	}
+	
 	public void initData()
 	{
 		DBUtil.onInit(getFilesDir());
@@ -129,7 +145,6 @@ public class MainActivity extends AppCompatActivity
 		}
 		cb = new ContactBean("辣鸡");
 		DBUtil.add(cb);
-		datas = DBUtil.query();
 	}
 
 	public void initWidget()
@@ -149,13 +164,14 @@ public class MainActivity extends AppCompatActivity
 
 		mFooterView.setText(datas.size() + "位联系人");
 		mAdapter = new ContactAdapter(this);
-		mAdapter.refresh(new ArrayList<ContactInterface>(datas));
+		refreshData();
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 	}
 
 	private void showInfo(ContactBean cb)
 	{
+		objcb = cb;
 		Intent it = new Intent();
 		it.setClass(this, ContactInfoActivity.class);
 		it.putExtra("ContactBeanID", cb.getId());
@@ -209,7 +225,6 @@ public class MainActivity extends AppCompatActivity
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id)
 	{
-		Toast.makeText(this, "pos:" + position, Toast.LENGTH_SHORT).show();
 		ContactBean cb = (ContactBean) mAdapter.getItem(position);
 		if (cb != null)
 			showInfo(cb);
