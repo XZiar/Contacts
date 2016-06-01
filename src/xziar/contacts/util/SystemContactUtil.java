@@ -92,7 +92,7 @@ public class SystemContactUtil
 					+ contactsId + "/data"); // 某个联系人下面的所有数据
 			Cursor dataCursor = resolver.query(uri, paramPeople, null, null,
 					null);
-			ContactBean cb = new ContactBean();
+			ContactBean cb = new ContactBean(contactsId);
 			// load head photo
 			Uri photoUri = Uri.withAppendedPath(
 					ContentUris.withAppendedId(

@@ -1,6 +1,7 @@
 package xziar.contacts.activity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
+import xziar.contacts.bean.ContactGroup;
 import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
@@ -38,8 +40,9 @@ public class MainActivity extends AppCompatActivity
 	private TextView mFooterView;
 
 	private ArrayList<ContactBean> datas = new ArrayList<>();
+	private HashMap<Integer, ContactGroup> groups;
 	private ContactAdapter mAdapter;
-	public ContactBean objcb;
+	public static ContactBean objcb;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -72,14 +75,14 @@ public class MainActivity extends AppCompatActivity
 			Intent it = new Intent(this, AddContactActivity.class);
 			startActivityForResult(it, REQUESTCODE_ADD);
 			break;
-		case R.id.action_import:
+		/*case R.id.action_import:
 			ArrayList<ContactBean> cbs = SystemContactUtil.readAll(context);
 			for(ContactBean cb : cbs)
 			{
 				DBUtil.add(cb);
 			}
 			refreshData();
-			break;
+			break;*/
 		default:
 			super.onOptionsItemSelected(item);
 		}
@@ -103,7 +106,8 @@ public class MainActivity extends AppCompatActivity
 
 	public void refreshData()
 	{
-		datas = DBUtil.query();
+		datas = SystemContactUtil.readAll(context);
+		groups = DBUtil.readGroup(datas);
 		mAdapter.refresh(datas);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -111,40 +115,6 @@ public class MainActivity extends AppCompatActivity
 	public void initData()
 	{
 		DBUtil.onInit(getFilesDir());
-		ContactBean cb = new ContactBean("Hello");
-		DBUtil.add(cb);
-		cb = new ContactBean("There");
-		DBUtil.add(cb);
-		cb = new ContactBean("Here");
-		DBUtil.add(cb);
-		{
-			cb = new ContactBean("P1");
-			DBUtil.add(cb);
-			cb = new ContactBean("P3");
-			DBUtil.add(cb);
-			cb = new ContactBean("P5");
-			DBUtil.add(cb);
-			cb = new ContactBean("QQ");
-			DBUtil.add(cb);
-			cb = new ContactBean("122");
-			DBUtil.add(cb);
-			cb = new ContactBean("sca");
-			DBUtil.add(cb);
-			cb = new ContactBean("下啊房产税");
-			DBUtil.add(cb);
-			cb = new ContactBean("道非道vf");
-			DBUtil.add(cb);
-			cb = new ContactBean("俄方vesd");
-			DBUtil.add(cb);
-			cb = new ContactBean("额few是");
-			DBUtil.add(cb);
-			cb = new ContactBean("额我few如果");
-			DBUtil.add(cb);
-			cb = new ContactBean("语句一般");
-			DBUtil.add(cb);
-		}
-		cb = new ContactBean("辣鸡");
-		DBUtil.add(cb);
 	}
 
 	public void initWidget()
@@ -172,9 +142,7 @@ public class MainActivity extends AppCompatActivity
 	private void showInfo(ContactBean cb)
 	{
 		objcb = cb;
-		Intent it = new Intent();
-		it.setClass(this, ContactInfoActivity.class);
-		it.putExtra("ContactBeanID", cb.getId());
+		Intent it = new Intent(this, ContactInfoActivity.class);
 		startActivityForResult(it, REQUESTCODE_INFO);
 	}
 

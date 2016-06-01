@@ -91,7 +91,8 @@ public class DataInject
 			MethodMap = ObjectMap.get(cname);
 		}
 		String[] cols = cs.getColumnNames();
-		cs.moveToFirst();
+		if(!cs.moveToFirst())
+			return rets;
 		HashMap<Integer, Integer> types = new HashMap<>();
 		HashMap<Integer, Method> mths = new HashMap<>();
 		for (int a = 0; a < cols.length; ++a)

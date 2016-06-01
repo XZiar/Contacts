@@ -55,7 +55,8 @@ public class AddContactActivity extends AppCompatActivity
 		int ID = getIntent().getIntExtra("ContactBeanID", -1);
 		if(ID != -1)
 		{
-			cb = DBUtil.query(ID);
+			//cb = DBUtil.query(ID);
+			cb = MainActivity.objcb;
 			initData();
 		}
 		else
@@ -84,7 +85,7 @@ public class AddContactActivity extends AppCompatActivity
 				saveData();
 				Intent intent = new Intent();
 				intent.putExtra("changed", true);
-				intent.putExtra("ContactBeanID", cb.getId());
+				MainActivity.objcb = cb;
 				setResult(RESULT_OK, intent);
 				finish();
 			}
@@ -97,7 +98,7 @@ public class AddContactActivity extends AppCompatActivity
 
 	private void saveData()
 	{
-		if (cb != null)
+		/*if (cb != null)
 			DBUtil.delete(cb);
 		cb = new ContactBean();
 		cb.setName(txt_name.getText().toString());
@@ -106,7 +107,7 @@ public class AddContactActivity extends AppCompatActivity
 		cb.setEmail(txt_email.getText().toString());
 		cb.setDescribe(txt_des.getText().toString());
 		cb.setHead(bmp);
-		DBUtil.add(cb);
+		DBUtil.add(cb);*/
 		SystemContactUtil.add(this, cb);
 	}
 

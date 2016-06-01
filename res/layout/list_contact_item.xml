@@ -22,11 +22,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:layout_marginStart="8dp"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:singleLine="true"
         android:textColor="#474747"
         android:textSize="16sp" />
-
+	
+    <TextView
+        android:id="@+id/contact_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginEnd="10dp"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:singleLine="true"
+        android:textColor="#a7a7a7"
+        android:textSize="12sp"
+        android:text="noname" />
 </LinearLayout>

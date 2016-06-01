@@ -24,16 +24,19 @@ public class ContactAdapter extends BaseAdapter
 	{
 		ImageView img;
 		TextView text;
+		TextView group;
 
 		public ViewHolder(View view)
 		{
-			text = (TextView) (view.findViewById(R.id.contact_title));
 			img = (ImageView) (view.findViewById(R.id.contact_head));
+			text = (TextView) (view.findViewById(R.id.contact_title));
+			group = (TextView) (view.findViewById(R.id.contact_group));
 		}
 
 		public void setData(ContactInterface ci)
 		{
 			text.setText(ci.getName());
+			group.setText(ci.getGroupName());
 			if (ci.getHead() != null)
 			{
 				img.setImageBitmap(ci.getHead());

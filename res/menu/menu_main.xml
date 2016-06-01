@@ -4,12 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="activity.MainActivity" >
 
-    <item
+    <!-- <item
         android:id="@+id/action_import"
         android:icon="@drawable/icon_import"
         android:orderInCategory="80"
         app:showAsAction="always"
-        android:title="import"/>
+        android:title="import"/> -->
     
     <item
         android:id="@+id/action_add"

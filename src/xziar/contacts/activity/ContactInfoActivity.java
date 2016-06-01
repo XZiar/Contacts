@@ -25,11 +25,7 @@ public class ContactInfoActivity extends AppCompatActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
-		int ID = getIntent().getIntExtra("ContactBeanID", -1);
-		if (ID != -1)
-			cb = DBUtil.query(ID);
-		else
-			cb = null;
+		cb = MainActivity.objcb;
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
@@ -61,7 +57,7 @@ public class ContactInfoActivity extends AppCompatActivity
 		ll_cont.addView(cii_des.getLayout());
 
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
