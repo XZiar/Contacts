@@ -1,7 +1,6 @@
 package xziar.contacts.activity;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import android.content.Context;
 import android.content.Intent;
@@ -21,11 +20,9 @@ import android.widget.TextView;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
-import xziar.contacts.bean.ContactGroup;
 import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
-import xziar.contacts.util.SystemContactUtil;
 import xziar.contacts.widget.SideBar;
 
 public class MainActivity extends AppCompatActivity
@@ -34,6 +31,7 @@ public class MainActivity extends AppCompatActivity
 {
 	private final static int REQUESTCODE_ADD = 1;
 	private final static int REQUESTCODE_INFO = 2;
+	private final static int REQUESTCODE_GROUP = 3;
 
 	private static Context context = null;
 	private StickyListHeadersListView mListView;
@@ -70,17 +68,13 @@ public class MainActivity extends AppCompatActivity
 		switch (item.getItemId())
 		{
 		case R.id.action_add:
-			Intent it = new Intent(this, AddContactActivity.class);
-			startActivityForResult(it, REQUESTCODE_ADD);
+			startActivityForResult(new Intent(this, AddContactActivity.class),
+					REQUESTCODE_ADD);
 			break;
-		/*case R.id.action_import:
-			ArrayList<ContactBean> cbs = SystemContactUtil.readAll(context);
-			for(ContactBean cb : cbs)
-			{
-				DBUtil.add(cb);
-			}
-			refreshData();
-			break;*/
+		case R.id.action_group:
+			startActivityForResult(new Intent(this, GroupActivity.class),
+					REQUESTCODE_GROUP);
+			break;
 		default:
 			super.onOptionsItemSelected(item);
 		}
@@ -108,7 +102,7 @@ public class MainActivity extends AppCompatActivity
 		mAdapter.refresh(DBUtil.people);
 		mAdapter.notifyDataSetChanged();
 	}
-	
+
 	public void initData()
 	{
 		DBUtil.onInit(getFilesDir());
