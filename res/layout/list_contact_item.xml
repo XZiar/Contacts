@@ -41,5 +41,5 @@
         android:singleLine="true"
         android:textColor="#a7a7a7"
         android:textSize="12sp"
-        android:text="noname" />
+        android:text="" />
 </LinearLayout>

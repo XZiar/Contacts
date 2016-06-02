@@ -68,6 +68,7 @@ public class MainActivity extends AppCompatActivity
 		switch (item.getItemId())
 		{
 		case R.id.action_add:
+			objcb = null;
 			startActivityForResult(new Intent(this, AddContactActivity.class),
 					REQUESTCODE_ADD);
 			break;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity
 
 	public void refreshData()
 	{
-		DBUtil.initData();
+		mFooterView.setText(DBUtil.people.size() + "位联系人");
 		mAdapter.refresh(DBUtil.people);
 		mAdapter.notifyDataSetChanged();
 	}
@@ -106,6 +107,7 @@ public class MainActivity extends AppCompatActivity
 	public void initData()
 	{
 		DBUtil.onInit(getFilesDir());
+		DBUtil.initData();
 	}
 
 	public void initWidget()
@@ -123,7 +125,6 @@ public class MainActivity extends AppCompatActivity
 				R.layout.item_list_contact_count, null);
 		mAdapter = new ContactAdapter(this);
 		refreshData();
-		mFooterView.setText(DBUtil.people.size() + "位联系人");
 		mListView.addFooterView(mFooterView);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);

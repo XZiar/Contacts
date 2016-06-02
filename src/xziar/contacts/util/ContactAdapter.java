@@ -25,18 +25,21 @@ public class ContactAdapter extends BaseAdapter
 		ImageView img;
 		TextView text;
 		TextView group;
-
-		public ViewHolder(View view)
+		private boolean isShowGroup;
+		
+		public ViewHolder(View view, boolean isShowGroup)
 		{
 			img = (ImageView) (view.findViewById(R.id.contact_head));
 			text = (TextView) (view.findViewById(R.id.contact_title));
 			group = (TextView) (view.findViewById(R.id.contact_group));
+			this.isShowGroup = isShowGroup;
 		}
 
 		public void setData(ContactInterface ci)
 		{
 			text.setText(ci.getName());
-			group.setText(ci.getGroupName());
+			if(isShowGroup)
+				group.setText(ci.getGroupName());
 			if (ci.getHead() != null)
 			{
 				img.setImageBitmap(ci.getHead());
@@ -50,16 +53,17 @@ public class ContactAdapter extends BaseAdapter
 
 	private ArrayList<ContactInterface> datas = new ArrayList<>();
 	private LayoutInflater inflater;
+	private boolean isShowGroup;
 
 	public ContactAdapter(Context context)
 	{
-		inflater = LayoutInflater.from(context);
+		this(context, true);
 	}
-
-	public ContactAdapter(Context context, ArrayList<ContactInterface> _datas)
+	
+	public ContactAdapter(Context context, boolean isShowGroup)
 	{
 		inflater = LayoutInflater.from(context);
-		refresh(_datas);
+		this.isShowGroup = isShowGroup;
 	}
 
 	public <T> void refresh(Collection<? extends ContactInterface> _datas)
@@ -136,7 +140,7 @@ public class ContactAdapter extends BaseAdapter
 		{
 			convertView = inflater.inflate(R.layout.list_contact_item, parent,
 					false);
-			holder = new ViewHolder(convertView);
+			holder = new ViewHolder(convertView, isShowGroup);
 			convertView.setTag(holder);
 		}
 		else

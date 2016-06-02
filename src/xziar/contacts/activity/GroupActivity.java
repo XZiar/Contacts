@@ -2,9 +2,11 @@ package xziar.contacts.activity;
 
 import java.util.ArrayList;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -34,7 +36,6 @@ public class GroupActivity extends AppCompatActivity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
 		OnItemClickListener
 {
-	private final static int REQUESTCODE_ADD = 1;
 	private final static int REQUESTCODE_INFO = 2;
 
 	private TextView title;
@@ -77,11 +78,10 @@ public class GroupActivity extends AppCompatActivity
 		switch (item.getItemId())
 		{
 		case R.id.action_add:
-			Intent it = new Intent(this, AddContactActivity.class);
-			startActivityForResult(it, REQUESTCODE_ADD);
+			addGroup();
 			break;
 		case 0x102002c:
-			if(isGroup)
+			if (isGroup)
 				finish();
 			else
 				showGroup(null);
@@ -107,6 +107,26 @@ public class GroupActivity extends AppCompatActivity
 		super.onActivityResult(requestCode, resultCode, data);
 	}
 
+	public void addGroup()
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("输入新分组的名称");
+		final EditText txt = new EditText(this);
+		builder.setView(txt);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				Toast.makeText(MainActivity.getContext(),
+						txt.getText().toString(), Toast.LENGTH_LONG).show();
+				DBUtil.addGroup(new ContactGroup(txt.getText().toString()));
+				refreshData();
+			}
+		});
+		builder.show();
+	}
+
 	public void refreshData()
 	{
 		if (isGroup)
@@ -116,6 +136,7 @@ public class GroupActivity extends AppCompatActivity
 		}
 		else
 		{
+			mFooterView.setText(objcg.getMembers().size() + "位联系人");
 			mAdapter.refresh(objcg.getMembers());
 			mAdapter.notifyDataSetChanged();
 		}
@@ -124,6 +145,7 @@ public class GroupActivity extends AppCompatActivity
 	public void initData()
 	{
 		cgAdapter = new ContactGroupAdapter(this);
+		mAdapter = new ContactAdapter(this, false);
 		objcg = DBUtil.groups.get(-1);
 	}
 
@@ -146,9 +168,7 @@ public class GroupActivity extends AppCompatActivity
 			// 给listView设置adapter
 			mFooterView = (TextView) View.inflate(this,
 					R.layout.item_list_contact_count, null);
-			mAdapter = new ContactAdapter(this);
 			refreshData();
-			mFooterView.setText(DBUtil.people.size() + "位联系人");
 			mListView.addFooterView(mFooterView);
 			mListView.setAdapter(mAdapter);
 			mListView.setOnItemClickListener(this);
@@ -239,14 +259,16 @@ public class GroupActivity extends AppCompatActivity
 	{
 		if (parent.getClass() == cgListView.getClass())
 		{
-			//Toast.makeText(this, parent.getClass().getName(), Toast.LENGTH_SHORT).show();
+			// Toast.makeText(this, parent.getClass().getName(),
+			// Toast.LENGTH_SHORT).show();
 			ContactGroup cg = (ContactGroup) cgAdapter.getItem(position);
 			if (cg != null)
 				showGroup(cg);
 		}
 		else
 		{
-			Toast.makeText(this, parent.getClass().getName(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, parent.getClass().getName(),
+					Toast.LENGTH_SHORT).show();
 			ContactBean cb = (ContactBean) mAdapter.getItem(position);
 			if (cb != null)
 				showInfo(cb);

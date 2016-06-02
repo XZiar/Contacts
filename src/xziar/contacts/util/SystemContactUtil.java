@@ -25,14 +25,12 @@ public class SystemContactUtil
 
 	public static int add(Context context, ContactBean cb)
 	{
-		// Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
 		ContentResolver resolver = context.getContentResolver();
 		ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 		operations
 				.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
 						.withValue(RawContacts.ACCOUNT_NAME, null).build());
 
-		// uri = Uri.parse("content://com.android.contacts/data");
 		// name
 		operations
 				.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
