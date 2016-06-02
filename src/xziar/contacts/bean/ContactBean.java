@@ -2,7 +2,7 @@ package xziar.contacts.bean;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
-
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import xziar.contacts.util.HanziToPinyin;
@@ -66,6 +66,7 @@ public class ContactBean implements ContactInterface, Serializable
 		return name;
 	}
 
+	@SuppressLint("DefaultLocale")
 	public void setName(String name)
 	{
 		this.name = name;

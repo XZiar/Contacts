@@ -37,6 +37,8 @@ public class SideBar extends View
 	public static char[] b = { '#', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
 			'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
 			'W', 'X', 'Y', 'Z' };
+	private static final ColorDrawable cdHind = new ColorDrawable(0x00000000);
+	private static final ColorDrawable cdShow = new ColorDrawable(0x13161316);
 	private int choose = -1;// бЁжа
 	private Paint paint = new Paint();
 
@@ -102,7 +104,7 @@ public class SideBar extends View
 		switch (action)
 		{
 		case MotionEvent.ACTION_UP:
-			setBackgroundDrawable(new ColorDrawable(0x00000000));
+			setBackground(cdHind);
 			choose = -1;//
 			invalidate();
 			if (mTextDialog != null)
@@ -112,7 +114,7 @@ public class SideBar extends View
 			break;
 
 		default:
-			setBackgroundDrawable(new ColorDrawable(0x13161316));
+			setBackground(cdShow);
 			if (oldChoose != c)
 			{
 				if (c >= 0 && c < b.length)

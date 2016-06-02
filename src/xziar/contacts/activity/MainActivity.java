@@ -39,8 +39,6 @@ public class MainActivity extends AppCompatActivity
 	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
 
-	private ArrayList<ContactBean> datas = new ArrayList<>();
-	private HashMap<Integer, ContactGroup> groups;
 	private ContactAdapter mAdapter;
 	public static ContactBean objcb;
 
@@ -106,9 +104,8 @@ public class MainActivity extends AppCompatActivity
 
 	public void refreshData()
 	{
-		datas = SystemContactUtil.readAll(context);
-		groups = DBUtil.readGroup(datas);
-		mAdapter.refresh(datas);
+		DBUtil.initData();
+		mAdapter.refresh(DBUtil.people);
 		mAdapter.notifyDataSetChanged();
 	}
 	
@@ -130,11 +127,10 @@ public class MainActivity extends AppCompatActivity
 		// 给listView设置adapter
 		mFooterView = (TextView) View.inflate(this,
 				R.layout.item_list_contact_count, null);
-		mListView.addFooterView(mFooterView);
-
-		mFooterView.setText(datas.size() + "位联系人");
 		mAdapter = new ContactAdapter(this);
 		refreshData();
+		mFooterView.setText(DBUtil.people.size() + "位联系人");
+		mListView.addFooterView(mFooterView);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 	}
@@ -172,7 +168,7 @@ public class MainActivity extends AppCompatActivity
 	public void onTextChanged(CharSequence s, int start, int before, int count)
 	{
 		ArrayList<ContactInterface> temp = new ArrayList<>();
-		for (ContactBean data : datas)
+		for (ContactBean data : DBUtil.people)
 		{
 			if (data.isContain(s))
 				temp.add(data);

@@ -9,6 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
+import xziar.contacts.activity.MainActivity;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.bean.ContactGroup;
 
@@ -45,6 +46,9 @@ public class DBUtil
 			+ "from contacts where Id=?";
 	private static SQLiteDatabase db;
 
+	public static ArrayList<ContactBean> people;
+	public static HashMap<Integer, ContactGroup> groups = new HashMap<>();
+	
 	static public void onInit(File dir)
 	{
 		Log.v("database", dir.getAbsolutePath());
@@ -64,22 +68,23 @@ public class DBUtil
 		}
 	}
 
-	static public HashMap<Integer, ContactGroup> readGroup(
-			ArrayList<ContactBean> cbs)
+	static public void initData()
 	{
+		people = SystemContactUtil.readAll(MainActivity.getContext());
+		
 		Cursor cursor = db.rawQuery(SQL_selectGroupAll, null);
-		ArrayList<ContactGroup> groups = DataInject.CursorToObjs(cursor,
+		ArrayList<ContactGroup> cgs = DataInject.CursorToObjs(cursor,
 				ContactGroup.class);
 		cursor.close();
 		ContactGroup ncb = new ContactGroup("Î´·Ö×é");
-		groups.add(ncb);
-		HashMap<Integer, ContactGroup> cgs = new HashMap<>();
-		for (ContactGroup cg : groups)
+		cgs.add(ncb);
+		groups.clear();
+		for (ContactGroup cg : cgs)
 		{
-			cgs.put(cg.getGid(), cg);
+			groups.put(cg.getGid(), cg);
 		}
+		
 		HashMap<Integer, Integer> mapping = new HashMap<>();
-
 		cursor = db.rawQuery(SQL_selectMappingAll, null);
 		cursor.moveToFirst();
 		while (cursor.moveToNext())
@@ -87,22 +92,23 @@ public class DBUtil
 			mapping.put(cursor.getInt(0), cursor.getInt(1));
 		}
 		cursor.close();
-		for (ContactBean cb : cbs)
+		
+		for (ContactBean cb : people)
 		{
 			int pid = cb.getId();
 			if (mapping.containsKey(pid))
 			{
-				ContactGroup cg = cgs.get(mapping.get(pid));
+				ContactGroup cg = groups.get(mapping.get(pid));
 				cg.addMembers(cb);
 				cb.setGroup(cg);
 			}
 			else
 			{
-				cgs.get(-1).addMembers(cb);
+				groups.get(-1).addMembers(cb);
 				cb.setGroup(ncb);
 			}
 		}
-		return cgs;
+		return;
 	}
 
 	static public void add(ContactBean cb)
