@@ -1,21 +1,20 @@
 package xziar.contacts.bean;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
 import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import xziar.contacts.util.HanziToPinyin;
 
-public class ContactBean implements ContactInterface, Serializable
+public class ContactBean implements ContactInterface
 {
-	private static final long serialVersionUID = 7361607606145741754L;
 	private String name = "";
 	private String cel = "";
 	private String tel = "";
 	private String describe = "";
 	private String email = "";
 	private byte[] img = null;
+	private Bitmap bmp = null;
 
 	private int id = -1;
 	private char firstLetter;
@@ -130,19 +129,18 @@ public class ContactBean implements ContactInterface, Serializable
 	public void setImg(byte[] img)
 	{
 		this.img = img;
+		bmp = BitmapFactory.decodeByteArray(img, 0, img.length);
 	}
 
 	@Override
 	public Bitmap getHead()
 	{
-		if (img == null)
-			return null;
-		else
-			return BitmapFactory.decodeByteArray(img, 0, img.length);
+		return bmp;
 	}
 	
-	public void setHead(Bitmap bmp)
+	public void setHead(Bitmap head)
 	{
+		bmp = head;
 		if(bmp == null)
 		{
 			img = null;

@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
-import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.ContactInfoItem;
 
 public class ContactInfoActivity extends AppCompatActivity

@@ -23,7 +23,7 @@ public class DBUtil
 	private static final String SQL_insertGroup = "insert into groups"
 			+ "(Name) " + "values(?)";
 	private static final String SQL_insertMapping = "insert into mappings"
-			+ "(Id,Name) " + "values(?,?)";
+			+ "(Pid,Gid) " + "values(?,?)";
 	private static final String SQL_deleteGroup = "delete from groups where Id=?";
 	private static final String SQL_deleteMapping = "delete from mappings where Pid=?";
 	private static final String SQL_deleteMappings = "delete from mappings where Gid=?";
@@ -31,10 +31,6 @@ public class DBUtil
 			+ "from groups ";
 	private static final String SQL_selectMappingAll = "select " + "Pid,Gid "
 			+ "from mappings ";
-
-	private static final String selectSQL = "select "
-			+ "Id,Name,Tel,Cel,Email,Describe,Img "
-			+ "from contacts where Id=?";
 	private static SQLiteDatabase db;
 
 	public static ArrayList<ContactBean> people;
@@ -118,13 +114,50 @@ public class DBUtil
 		}
 	}
 
+	static public void addToGroup(ContactBean cb, ContactGroup cg)
+	{
+		ContactGroup ocg = cb.getGroup();
+		if (ocg != null)
+		{
+			if (ocg != groups.get(-1))
+			{
+				SQLiteStatement stmt = db.compileStatement(SQL_deleteMapping);
+				stmt.bindLong(1, cb.getId());
+				try
+				{
+					stmt.executeInsert();
+				}
+				catch (SQLException e)
+				{
+					Log.e("sql", e.getLocalizedMessage());
+				}
+			}
+			ocg.delMembers(cb);
+		}
+		if (cg != groups.get(-1))
+		{
+			SQLiteStatement stmt = db.compileStatement(SQL_insertMapping);
+			stmt.bindLong(1, cb.getId());
+			stmt.bindLong(2, cg.getGid());
+			try
+			{
+				stmt.executeInsert();
+			}
+			catch (SQLException e)
+			{
+				Log.e("sql", e.getLocalizedMessage());
+			}
+		}
+		cb.setGroup(cg);
+		cg.addMembers(cb);
+	}
+
 	static public void addPeople(ContactBean cb, ContactGroup cg)
 	{
 		SystemContactUtil.add(MainActivity.getContext(), cb);
 		if (cg == null)
 			cg = groups.get(-1);
-		cb.setGroup(cg);
-		cg.addMembers(cb);
+		addToGroup(cb, cg);
 		people.add(cb);
 	}
 
