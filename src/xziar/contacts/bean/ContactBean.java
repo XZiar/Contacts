@@ -129,7 +129,10 @@ public class ContactBean implements ContactInterface
 	public void setImg(byte[] img)
 	{
 		this.img = img;
-		bmp = BitmapFactory.decodeByteArray(img, 0, img.length);
+		if (img == null)
+			bmp = null;
+		else
+			bmp = BitmapFactory.decodeByteArray(img, 0, img.length);
 	}
 
 	@Override
@@ -137,11 +140,11 @@ public class ContactBean implements ContactInterface
 	{
 		return bmp;
 	}
-	
+
 	public void setHead(Bitmap head)
 	{
 		bmp = head;
-		if(bmp == null)
+		if (bmp == null)
 		{
 			img = null;
 			return;

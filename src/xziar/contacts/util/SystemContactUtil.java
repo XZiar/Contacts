@@ -3,6 +3,7 @@ package xziar.contacts.util;
 import java.util.ArrayList;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -67,13 +68,15 @@ public class SystemContactUtil
 
 		try
 		{
-			resolver.applyBatch(ContactsContract.AUTHORITY, operations);
+			ContentProviderResult[] ress = resolver
+					.applyBatch(ContactsContract.AUTHORITY, operations);
+			return (int) ContentUris.parseId(ress[0].uri);
 		}
 		catch (RemoteException | OperationApplicationException e)
 		{
 			e.printStackTrace();
+			return -1;
 		}
-		return 0;
 	}
 
 	public static ArrayList<ContactBean> readAll(Context context)

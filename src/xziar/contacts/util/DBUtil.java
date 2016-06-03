@@ -49,9 +49,9 @@ public class DBUtil
 		catch (SQLException e)
 		{
 			Log.e("sql", e.getLocalizedMessage());
-			delete();
-			db.execSQL(SQL_initGroup);
-			db.execSQL(SQL_initMapping);
+			/*
+			 * delete(); db.execSQL(SQL_initGroup); db.execSQL(SQL_initMapping);
+			 */
 		}
 	}
 
@@ -116,8 +116,6 @@ public class DBUtil
 
 	static public void addToGroup(ContactBean cb, ContactGroup cg)
 	{
-		Log.v("db-moveTo", cb.getName() + ":from " + cb.getGroupName() + " to "
-				+ cg.getName());
 		ContactGroup ocg = cb.getGroup();
 		if (ocg != null)
 		{
@@ -156,7 +154,7 @@ public class DBUtil
 
 	static public void addPeople(ContactBean cb, ContactGroup cg)
 	{
-		SystemContactUtil.add(MainActivity.getContext(), cb);
+		cb.setId(SystemContactUtil.add(MainActivity.getContext(), cb));
 		if (cg == null)
 			cg = groups.get(-1);
 		addToGroup(cb, cg);
