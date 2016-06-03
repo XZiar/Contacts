@@ -116,6 +116,8 @@ public class DBUtil
 
 	static public void addToGroup(ContactBean cb, ContactGroup cg)
 	{
+		Log.v("db-moveTo", cb.getName() + ":from " + cb.getGroupName() + " to "
+				+ cg.getName());
 		ContactGroup ocg = cb.getGroup();
 		if (ocg != null)
 		{
@@ -125,7 +127,7 @@ public class DBUtil
 				stmt.bindLong(1, cb.getId());
 				try
 				{
-					stmt.executeInsert();
+					stmt.executeUpdateDelete();
 				}
 				catch (SQLException e)
 				{
