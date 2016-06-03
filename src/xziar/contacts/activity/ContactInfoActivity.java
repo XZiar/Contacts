@@ -1,6 +1,7 @@
 package xziar.contacts.activity;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -26,9 +27,8 @@ public class ContactInfoActivity extends AppCompatActivity
 	private String[] strs;
 	private ContactGroup[] cgs;
 	private LinearLayout ll_cont;
-	private TextView txt_gname;
 	private NumberPicker np_group;
-	private ContactInfoItem cii_cel, cii_tel, cii_email, cii_des;
+	private ContactInfoItem cii_cel, cii_tel, cii_email, cii_des, cli_group;
 	private ImageView img_head;
 
 	@Override
@@ -44,9 +44,6 @@ public class ContactInfoActivity extends AppCompatActivity
 		ActionBar actbar = getSupportActionBar();
 		actbar.setDisplayHomeAsUpEnabled(true);
 
-		txt_gname = (TextView) findViewById(R.id.contact_gname);
-		txt_gname.setText(cb.getGroupName());
-		txt_gname.setOnClickListener(this);
 		TextView name = (TextView) findViewById(R.id.contact_title);
 		name.setText(cb.getName());
 		ll_cont = (LinearLayout) findViewById(R.id.contact_content);
@@ -70,6 +67,11 @@ public class ContactInfoActivity extends AppCompatActivity
 				false, false);
 		ll_cont.addView(cii_des.getLayout());
 
+		cli_group = new ContactInfoItem(this, ll_cont, "联系人分组", cb.getGroupName(),
+				false, false);
+		cli_group.setOnClickListener(this);
+		ll_cont.addView(cli_group.getLayout());
+		
 		cgs = DBUtil.groups.values().toArray(new ContactGroup[0]);
 		strs = new String[cgs.length];
 		int objidx = 0;
@@ -101,6 +103,11 @@ public class ContactInfoActivity extends AppCompatActivity
 		return true;
 	}
 
+	private void refreshData()
+	{
+		cli_group.setVal(cb.getGroupName());
+	}
+	
 	@Override
 	public void onClick(View v)
 	{
@@ -113,6 +120,8 @@ public class ContactInfoActivity extends AppCompatActivity
 			public void onClick(DialogInterface dialog, int which)
 			{
 				DBUtil.addToGroup(cb, cgs[np_group.getValue()]);
+				refreshData();
+				setResult(RESULT_OK, new Intent().putExtra("changed", true));
 			}
 		});
 		builder.show();

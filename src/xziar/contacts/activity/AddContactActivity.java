@@ -25,9 +25,9 @@ import xziar.contacts.util.DBUtil;
 public class AddContactActivity extends AppCompatActivity
 {
 	private ContactBean cb;
+	private Bitmap bmp;
 	private TextView txt_title;
 	private ImageView img_head;
-	private Bitmap bmp;
 	private EditText txt_name, txt_cel, txt_tel, txt_email, txt_des;
 
 	@Override

@@ -118,8 +118,6 @@ public class GroupActivity extends AppCompatActivity
 			@Override
 			public void onClick(DialogInterface dialog, int which)
 			{
-				Toast.makeText(MainActivity.getContext(),
-						txt.getText().toString(), Toast.LENGTH_LONG).show();
 				DBUtil.addGroup(new ContactGroup(txt.getText().toString()));
 				refreshData();
 			}
@@ -259,16 +257,12 @@ public class GroupActivity extends AppCompatActivity
 	{
 		if (parent.getClass() == cgListView.getClass())
 		{
-			// Toast.makeText(this, parent.getClass().getName(),
-			// Toast.LENGTH_SHORT).show();
 			ContactGroup cg = (ContactGroup) cgAdapter.getItem(position);
 			if (cg != null)
 				showGroup(cg);
 		}
 		else
 		{
-			Toast.makeText(this, parent.getClass().getName(),
-					Toast.LENGTH_SHORT).show();
 			ContactBean cb = (ContactBean) mAdapter.getItem(position);
 			if (cb != null)
 				showInfo(cb);
