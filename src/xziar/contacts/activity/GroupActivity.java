@@ -21,7 +21,6 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
@@ -29,12 +28,13 @@ import xziar.contacts.bean.ContactGroup;
 import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.ContactGroupAdapter;
+import xziar.contacts.util.ContactGroupAdapter.OnDeleteItemListener;
 import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.SideBar;
 
 public class GroupActivity extends AppCompatActivity
 		implements SideBar.OnTouchingLetterChangedListener, TextWatcher,
-		OnItemClickListener
+		OnItemClickListener, OnDeleteItemListener
 {
 	private final static int REQUESTCODE_INFO = 2;
 
@@ -143,6 +143,7 @@ public class GroupActivity extends AppCompatActivity
 	public void initData()
 	{
 		cgAdapter = new ContactGroupAdapter(this);
+		cgAdapter.setOnDeleteItemListner(this);
 		mAdapter = new ContactAdapter(this, false);
 		objcg = DBUtil.groups.get(-1);
 	}
@@ -267,6 +268,13 @@ public class GroupActivity extends AppCompatActivity
 			if (cb != null)
 				showInfo(cb);
 		}
+	}
+
+	@Override
+	public void onDelete(ContactGroup cg)
+	{
+		DBUtil.deleteGroup(cg);
+		refreshData();
 	}
 
 }

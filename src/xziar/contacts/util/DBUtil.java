@@ -169,43 +169,32 @@ public class DBUtil
 		db.execSQL("drop table mappings");
 	}
 
-	static public void deleteGroup(ContactGroup cg)
+	static public boolean deleteGroup(ContactGroup cg)
 	{
+		ContactGroup ocg = groups.get(-1);
+		if (cg == ocg)
+			return false;
 		SQLiteStatement stmt1 = db.compileStatement(SQL_deleteMappings);
 		SQLiteStatement stmt2 = db.compileStatement(SQL_deleteGroup);
 		stmt1.bindLong(1, cg.getGid());
 		stmt2.bindLong(1, cg.getGid());
 		try
 		{
-			int num = stmt1.executeUpdateDelete();
+			stmt1.executeUpdateDelete();
 			stmt2.executeUpdateDelete();
-			Log.v("database", "finish delete,affect " + num);
 		}
 		catch (SQLException e)
 		{
 			Log.e("sql", e.getLocalizedMessage());
 		}
+		for (ContactBean cb : cg.getMembers())
+		{
+			cb.setGroup(ocg);
+			ocg.addMembers(cb);
+		}
+		groups.remove(cg.getGid());
+		return true;
 	}
-
-	/*
-	 * static public void delete(ContactBean cb) { SQLiteStatement stmt =
-	 * db.compileStatement(deleteSQL); stmt.bindLong(1, cb.getId()); try { int
-	 * num = stmt.executeUpdateDelete(); Log.v("tester", "finish delete,affect "
-	 * + num); } catch (SQLException e) { Log.e("sql", e.getLocalizedMessage());
-	 * } }
-	 * 
-	 * static public ArrayList<ContactBean> query() { Cursor cursor =
-	 * db.rawQuery(selectAllSQL, null); ArrayList<ContactBean> cbs =
-	 * DataInject.CursorToObjs(cursor, ContactBean.class); cursor.close();
-	 * return cbs; }
-	 * 
-	 * static public ContactBean query(int ID) { String[] arg = new String[] {
-	 * "" + ID }; Cursor cursor = db.rawQuery(selectSQL, arg); try { ContactBean
-	 * cb = new ContactBean(); if (cursor.moveToFirst())
-	 * DataInject.CursorToObj(cursor, cb); else cb = null; return cb; } catch
-	 * (SQLException e) { Log.e("sql", e.getLocalizedMessage()); return null; }
-	 * finally { cursor.close(); } }
-	 */
 
 	static public void onExit()
 	{

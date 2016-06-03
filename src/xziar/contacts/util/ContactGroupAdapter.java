@@ -4,42 +4,57 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import com.daimajia.swipe.adapters.BaseSwipeAdapter;
+
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactGroup;
 
-public class ContactGroupAdapter extends BaseAdapter
+public class ContactGroupAdapter extends BaseSwipeAdapter
 {
-	class ViewHolder
+	public interface OnDeleteItemListener
 	{
-		ImageView img;
+		public void onDelete(ContactGroup cg);
+	}
+	
+	class ViewHolder implements OnClickListener
+	{
+		ContactGroupAdapter cga;
 		TextView text;
-		TextView group;
+		ImageView delete;
+		ContactGroup cg;
 
-		public ViewHolder(View view)
+		public ViewHolder(ContactGroupAdapter cga, View view)
 		{
-			img = (ImageView) (view.findViewById(R.id.contact_head));
+			this.cga = cga;
 			text = (TextView) (view.findViewById(R.id.contact_title));
-			group = (TextView) (view.findViewById(R.id.contact_group));
+			delete = (ImageView) (view.findViewById(R.id.cgdelete));
 		}
 
 		public void setData(ContactGroup cg)
 		{
+			this.cg = cg;
 			text.setText(cg.getName());
-			group.setText("");
-			img.setImageResource(R.drawable.icon_group);
+			delete.setOnClickListener(this);
+		}
+
+		@Override
+		public void onClick(View v)
+		{
+			cga.delItemListner.onDelete(cg);
 		}
 	}
 
 	private ArrayList<ContactGroup> datas = new ArrayList<>();
 	private LayoutInflater inflater;
+	OnDeleteItemListener delItemListner;
 
 	public ContactGroupAdapter(Context context)
 	{
@@ -52,6 +67,11 @@ public class ContactGroupAdapter extends BaseAdapter
 		refresh(_datas);
 	}
 
+	public void setOnDeleteItemListner(OnDeleteItemListener delItemListner)
+	{
+		this.delItemListner = delItemListner;
+	}
+	
 	public <T> void refresh(Collection<ContactGroup> _datas)
 	{
 		datas.clear();
@@ -59,7 +79,7 @@ public class ContactGroupAdapter extends BaseAdapter
 		Collections.sort(datas);
 		notifyDataSetChanged();
 	}
-
+	
 	@Override
 	public boolean areAllItemsEnabled()
 	{
@@ -118,27 +138,6 @@ public class ContactGroupAdapter extends BaseAdapter
 	}
 
 	@Override
-	public View getView(int position, View convertView, ViewGroup parent)
-	{
-		ViewHolder holder;
-
-		if (convertView == null)
-		{
-			convertView = inflater.inflate(R.layout.list_contact_item, parent,
-					false);
-			holder = new ViewHolder(convertView);
-			convertView.setTag(holder);
-		}
-		else
-		{
-			holder = (ViewHolder) convertView.getTag();
-		}
-		holder.setData(datas.get(position));
-
-		return convertView;
-	}
-
-	@Override
 	public void registerDataSetObserver(DataSetObserver observer)
 	{
 		super.registerDataSetObserver(observer);
@@ -148,5 +147,29 @@ public class ContactGroupAdapter extends BaseAdapter
 	public void unregisterDataSetObserver(DataSetObserver observer)
 	{
 		super.unregisterDataSetObserver(observer);
+	}
+
+	@Override
+	public void fillValues(int position, View convertView)
+	{
+		ViewHolder holder = (ViewHolder) convertView.getTag();
+		if (holder == null)
+		{
+			holder = new ViewHolder(this, convertView);
+			convertView.setTag(holder);
+		}
+		holder.setData(datas.get(position));
+	}
+
+	@Override
+	public View generateView(int position, ViewGroup parent)
+	{
+		return inflater.inflate(R.layout.list_contactgroup_item, parent, false);
+	}
+
+	@Override
+	public int getSwipeLayoutResourceId(int position)
+	{
+		return R.id.contactgroup_item;
 	}
 }
