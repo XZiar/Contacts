@@ -23,7 +23,6 @@ import xziar.contacts.bean.ContactBean;
 import xziar.contacts.bean.ContactInterface;
 import xziar.contacts.util.ContactAdapter;
 import xziar.contacts.util.DBUtil;
-import xziar.contacts.util.SystemContactUtil;
 import xziar.contacts.widget.SideBar;
 
 public class MainActivity extends AppCompatActivity
@@ -32,14 +31,14 @@ public class MainActivity extends AppCompatActivity
 {
 	private final static int REQUESTCODE_ADD = 1;
 	private final static int REQUESTCODE_INFO = 2;
+	private final static int REQUESTCODE_GROUP = 3;
 
 	private static Context context = null;
 	private StickyListHeadersListView mListView;
 	private TextView mFooterView;
 
-	private ArrayList<ContactBean> datas = new ArrayList<>();
 	private ContactAdapter mAdapter;
-	public ContactBean objcb;
+	public static ContactBean objcb;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -69,16 +68,13 @@ public class MainActivity extends AppCompatActivity
 		switch (item.getItemId())
 		{
 		case R.id.action_add:
-			Intent it = new Intent(this, AddContactActivity.class);
-			startActivityForResult(it, REQUESTCODE_ADD);
+			objcb = null;
+			startActivityForResult(new Intent(this, AddContactActivity.class),
+					REQUESTCODE_ADD);
 			break;
-		case R.id.action_import:
-			ArrayList<ContactBean> cbs = SystemContactUtil.readAll(context);
-			for(ContactBean cb : cbs)
-			{
-				DBUtil.add(cb);
-			}
-			refreshData();
+		case R.id.action_group:
+			startActivityForResult(new Intent(this, GroupActivity.class),
+					REQUESTCODE_GROUP);
 			break;
 		default:
 			super.onOptionsItemSelected(item);
@@ -103,48 +99,15 @@ public class MainActivity extends AppCompatActivity
 
 	public void refreshData()
 	{
-		datas = DBUtil.query();
-		mAdapter.refresh(datas);
+		mFooterView.setText(DBUtil.people.size() + "位联系人");
+		mAdapter.refresh(DBUtil.people);
 		mAdapter.notifyDataSetChanged();
 	}
-	
+
 	public void initData()
 	{
 		DBUtil.onInit(getFilesDir());
-		ContactBean cb = new ContactBean("Hello");
-		DBUtil.add(cb);
-		cb = new ContactBean("There");
-		DBUtil.add(cb);
-		cb = new ContactBean("Here");
-		DBUtil.add(cb);
-		{
-			cb = new ContactBean("P1");
-			DBUtil.add(cb);
-			cb = new ContactBean("P3");
-			DBUtil.add(cb);
-			cb = new ContactBean("P5");
-			DBUtil.add(cb);
-			cb = new ContactBean("QQ");
-			DBUtil.add(cb);
-			cb = new ContactBean("122");
-			DBUtil.add(cb);
-			cb = new ContactBean("sca");
-			DBUtil.add(cb);
-			cb = new ContactBean("下啊房产税");
-			DBUtil.add(cb);
-			cb = new ContactBean("道非道vf");
-			DBUtil.add(cb);
-			cb = new ContactBean("俄方vesd");
-			DBUtil.add(cb);
-			cb = new ContactBean("额few是");
-			DBUtil.add(cb);
-			cb = new ContactBean("额我few如果");
-			DBUtil.add(cb);
-			cb = new ContactBean("语句一般");
-			DBUtil.add(cb);
-		}
-		cb = new ContactBean("辣鸡");
-		DBUtil.add(cb);
+		DBUtil.initData();
 	}
 
 	public void initWidget()
@@ -160,11 +123,9 @@ public class MainActivity extends AppCompatActivity
 		// 给listView设置adapter
 		mFooterView = (TextView) View.inflate(this,
 				R.layout.item_list_contact_count, null);
-		mListView.addFooterView(mFooterView);
-
-		mFooterView.setText(datas.size() + "位联系人");
 		mAdapter = new ContactAdapter(this);
 		refreshData();
+		mListView.addFooterView(mFooterView);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnItemClickListener(this);
 	}
@@ -172,9 +133,7 @@ public class MainActivity extends AppCompatActivity
 	private void showInfo(ContactBean cb)
 	{
 		objcb = cb;
-		Intent it = new Intent();
-		it.setClass(this, ContactInfoActivity.class);
-		it.putExtra("ContactBeanID", cb.getId());
+		Intent it = new Intent(this, ContactInfoActivity.class);
 		startActivityForResult(it, REQUESTCODE_INFO);
 	}
 
@@ -204,7 +163,7 @@ public class MainActivity extends AppCompatActivity
 	public void onTextChanged(CharSequence s, int start, int before, int count)
 	{
 		ArrayList<ContactInterface> temp = new ArrayList<>();
-		for (ContactBean data : datas)
+		for (ContactBean data : DBUtil.people)
 		{
 			if (data.isContain(s))
 				temp.add(data);

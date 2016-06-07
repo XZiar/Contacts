@@ -1,25 +1,25 @@
 package xziar.contacts.bean;
 
 import java.io.ByteArrayOutputStream;
-import java.io.Serializable;
-
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import xziar.contacts.util.HanziToPinyin;
 
-public class ContactBean implements ContactInterface, Serializable
+public class ContactBean implements ContactInterface
 {
-	private static final long serialVersionUID = 7361607606145741754L;
 	private String name = "";
-	private String cel = "111";
-	private String tel = "222";
-	private String describe = "bgfgf";
-	private String email = "fdvfdb";
+	private String cel = "";
+	private String tel = "";
+	private String describe = "";
+	private String email = "";
 	private byte[] img = null;
+	private Bitmap bmp = null;
 
 	private int id = -1;
 	private char firstLetter;
 	private String pinYin = "";
+	private ContactGroup group;
 
 	public ContactBean()
 	{
@@ -28,6 +28,11 @@ public class ContactBean implements ContactInterface, Serializable
 	public ContactBean(String name)
 	{
 		setName(name);
+	}
+
+	public ContactBean(int id)
+	{
+		setId(id);
 	}
 
 	@Override
@@ -60,6 +65,7 @@ public class ContactBean implements ContactInterface, Serializable
 		return name;
 	}
 
+	@SuppressLint("DefaultLocale")
 	public void setName(String name)
 	{
 		this.name = name;
@@ -123,20 +129,22 @@ public class ContactBean implements ContactInterface, Serializable
 	public void setImg(byte[] img)
 	{
 		this.img = img;
+		if (img == null)
+			bmp = null;
+		else
+			bmp = BitmapFactory.decodeByteArray(img, 0, img.length);
 	}
 
 	@Override
 	public Bitmap getHead()
 	{
-		if (img == null)
-			return null;
-		else
-			return BitmapFactory.decodeByteArray(img, 0, img.length);
+		return bmp;
 	}
-	
-	public void setHead(Bitmap bmp)
+
+	public void setHead(Bitmap head)
 	{
-		if(bmp == null)
+		bmp = head;
+		if (bmp == null)
 		{
 			img = null;
 			return;
@@ -156,4 +164,19 @@ public class ContactBean implements ContactInterface, Serializable
 		this.id = id;
 	}
 
+	@Override
+	public String getGroupName()
+	{
+		return group.getName();
+	}
+
+	public ContactGroup getGroup()
+	{
+		return group;
+	}
+
+	public void setGroup(ContactGroup group)
+	{
+		this.group = group;
+	}
 }

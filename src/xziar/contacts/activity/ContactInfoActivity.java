@@ -1,23 +1,34 @@
 package xziar.contacts.activity;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
+import xziar.contacts.bean.ContactGroup;
 import xziar.contacts.util.DBUtil;
 import xziar.contacts.widget.ContactInfoItem;
 
 public class ContactInfoActivity extends AppCompatActivity
+		implements OnClickListener
 {
 	private ContactBean cb;
+	private String[] strs;
+	private ContactGroup[] cgs;
 	private LinearLayout ll_cont;
-	private ContactInfoItem cii_cel, cii_tel, cii_email, cii_des;
+	private NumberPicker np_group;
+	private ContactInfoItem cii_cel, cii_tel, cii_email, cii_des, cli_group;
 	private ImageView img_head;
 
 	@Override
@@ -25,11 +36,7 @@ public class ContactInfoActivity extends AppCompatActivity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_contact_info);
-		int ID = getIntent().getIntExtra("ContactBeanID", -1);
-		if (ID != -1)
-			cb = DBUtil.query(ID);
-		else
-			cb = null;
+		cb = MainActivity.objcb;
 
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		toolbar.setTitle("");
@@ -60,8 +67,28 @@ public class ContactInfoActivity extends AppCompatActivity
 				false, false);
 		ll_cont.addView(cii_des.getLayout());
 
+		cli_group = new ContactInfoItem(this, ll_cont, "联系人分组", cb.getGroupName(),
+				false, false);
+		cli_group.setOnClickListener(this);
+		ll_cont.addView(cli_group.getLayout());
+		
+		cgs = DBUtil.groups.values().toArray(new ContactGroup[0]);
+		strs = new String[cgs.length];
+		int objidx = 0;
+		for (int a = 0; a < cgs.length; a++)
+		{
+			ContactGroup cg = cgs[a];
+			if (cb.getGroup() == cg)
+				objidx = a;
+			strs[a] = cg.getName();
+		}
+		np_group = new NumberPicker(this);
+		np_group.setDisplayedValues(strs);
+		np_group.setMinValue(0);
+		np_group.setMaxValue(strs.length - 1);
+		np_group.setValue(objidx);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
@@ -74,5 +101,29 @@ public class ContactInfoActivity extends AppCompatActivity
 			super.onOptionsItemSelected(item);
 		}
 		return true;
+	}
+
+	private void refreshData()
+	{
+		cli_group.setVal(cb.getGroupName());
+	}
+	
+	@Override
+	public void onClick(View v)
+	{
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("更改 " + cb.getName() + " 的分组");
+		builder.setView(np_group);
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialog, int which)
+			{
+				DBUtil.addToGroup(cb, cgs[np_group.getValue()]);
+				refreshData();
+				setResult(RESULT_OK, new Intent().putExtra("changed", true));
+			}
+		});
+		builder.show();
 	}
 }

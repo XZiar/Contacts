@@ -21,14 +21,13 @@ import android.widget.TextView;
 import xziar.contacts.R;
 import xziar.contacts.bean.ContactBean;
 import xziar.contacts.util.DBUtil;
-import xziar.contacts.util.SystemContactUtil;
 
 public class AddContactActivity extends AppCompatActivity
 {
 	private ContactBean cb;
+	private Bitmap bmp;
 	private TextView txt_title;
 	private ImageView img_head;
-	private Bitmap bmp;
 	private EditText txt_name, txt_cel, txt_tel, txt_email, txt_des;
 
 	@Override
@@ -52,15 +51,11 @@ public class AddContactActivity extends AppCompatActivity
 			txt_des = (EditText) findViewById(R.id.contact_des);
 		}
 		bmp = null;
-		int ID = getIntent().getIntExtra("ContactBeanID", -1);
-		if(ID != -1)
+		cb = MainActivity.objcb;
+		if (cb != null)
 		{
-			cb = DBUtil.query(ID);
 			initData();
 		}
-		else
-			cb = null;
-			
 	}
 
 	@Override
@@ -82,10 +77,7 @@ public class AddContactActivity extends AppCompatActivity
 			if (txt_name.getText().length() != 0)
 			{
 				saveData();
-				Intent intent = new Intent();
-				intent.putExtra("changed", true);
-				intent.putExtra("ContactBeanID", cb.getId());
-				setResult(RESULT_OK, intent);
+				setResult(RESULT_OK, new Intent().putExtra("changed", true));
 				finish();
 			}
 			break;
@@ -97,8 +89,8 @@ public class AddContactActivity extends AppCompatActivity
 
 	private void saveData()
 	{
-		if (cb != null)
-			DBUtil.delete(cb);
+		// if (cb != null)
+		// DBUtil.delete(cb);
 		cb = new ContactBean();
 		cb.setName(txt_name.getText().toString());
 		cb.setCel(txt_cel.getText().toString());
@@ -106,8 +98,7 @@ public class AddContactActivity extends AppCompatActivity
 		cb.setEmail(txt_email.getText().toString());
 		cb.setDescribe(txt_des.getText().toString());
 		cb.setHead(bmp);
-		DBUtil.add(cb);
-		SystemContactUtil.add(this, cb);
+		DBUtil.addPeople(cb, null);
 	}
 
 	private void initData()

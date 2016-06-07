@@ -3,6 +3,7 @@ package xziar.contacts.util;
 import java.util.ArrayList;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -25,14 +26,12 @@ public class SystemContactUtil
 
 	public static int add(Context context, ContactBean cb)
 	{
-		// Uri uri = Uri.parse("content://com.android.contacts/raw_contacts");
 		ContentResolver resolver = context.getContentResolver();
 		ArrayList<ContentProviderOperation> operations = new ArrayList<>();
 		operations
 				.add(ContentProviderOperation.newInsert(RawContacts.CONTENT_URI)
 						.withValue(RawContacts.ACCOUNT_NAME, null).build());
 
-		// uri = Uri.parse("content://com.android.contacts/data");
 		// name
 		operations
 				.add(ContentProviderOperation.newInsert(Data.CONTENT_URI)
@@ -69,13 +68,15 @@ public class SystemContactUtil
 
 		try
 		{
-			resolver.applyBatch(ContactsContract.AUTHORITY, operations);
+			ContentProviderResult[] ress = resolver
+					.applyBatch(ContactsContract.AUTHORITY, operations);
+			return (int) ContentUris.parseId(ress[0].uri);
 		}
 		catch (RemoteException | OperationApplicationException e)
 		{
 			e.printStackTrace();
+			return -1;
 		}
-		return 0;
 	}
 
 	public static ArrayList<ContactBean> readAll(Context context)
@@ -92,7 +93,7 @@ public class SystemContactUtil
 					+ contactsId + "/data"); // 某个联系人下面的所有数据
 			Cursor dataCursor = resolver.query(uri, paramPeople, null, null,
 					null);
-			ContactBean cb = new ContactBean();
+			ContactBean cb = new ContactBean(contactsId);
 			// load head photo
 			Uri photoUri = Uri.withAppendedPath(
 					ContentUris.withAppendedId(

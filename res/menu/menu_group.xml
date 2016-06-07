@@ -3,13 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="activity.MainActivity" >
-
-    <item
-        android:id="@+id/action_group"
-        android:icon="@drawable/icon_group"
-        android:orderInCategory="80"
-        app:showAsAction="always"
-        android:title="group"/>
     
     <item
         android:id="@+id/action_add"

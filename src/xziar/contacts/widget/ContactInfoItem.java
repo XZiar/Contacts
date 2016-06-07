@@ -15,6 +15,7 @@ import xziar.contacts.R;
 public class ContactInfoItem
 {
 	private LinearLayout layout;
+	private TextView content;
 
 	public LinearLayout getLayout()
 	{
@@ -34,7 +35,8 @@ public class ContactInfoItem
 		layout = (LinearLayout) LayoutInflater.from(context)
 				.inflate(R.layout.contact_info_item, parent, false);
 		((TextView) layout.findViewById(R.id.contact_name)).setText(name);
-		((TextView) layout.findViewById(R.id.contact_val)).setText(val);
+		content = (TextView) layout.findViewById(R.id.contact_val);
+		content.setText(val);
 		ImageButton call = ((ImageButton) layout
 				.findViewById(R.id.contact_call));
 		ImageButton msg = ((ImageButton) layout.findViewById(R.id.contact_msg));
@@ -70,5 +72,15 @@ public class ContactInfoItem
 		}
 		else
 			msg.setVisibility(View.GONE);
+	}
+
+	public void setVal(String val)
+	{
+		content.setText(val);
+	}
+	
+	public void setOnClickListener(OnClickListener l)
+	{
+		content.setOnClickListener(l);
 	}
 }
